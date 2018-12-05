@@ -1,11 +1,14 @@
 import React from 'react';
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import List from '@material-ui/core/List';
@@ -33,6 +36,12 @@ const styles = {
     },
     fullList: {
         width: 'auto',
+    },
+    avatar: {
+        margin: 10,
+    },
+    username: {
+        margin: '10px 0',
     },
 };
 
@@ -104,6 +113,15 @@ class ButtonAppBar extends React.Component {
                         onClick={this.toggleDrawer('left', false)}
                         onKeyDown={this.toggleDrawer('left', false)}
                     >
+                        <Grid container wrap="nowrap" spacing={16}>
+                            <Grid item>
+                                <Avatar className={classes.avatar}>{this.props.user[0]}</Avatar>
+                            </Grid>
+                            <Grid item xs zeroMinWidth>
+                                <Typography className={classes.username} noWrap>{this.props.user}</Typography>
+                            </Grid>
+                        </Grid>
+                        <Divider />
                         {sideList}
                     </div>
                 </SwipeableDrawer>
@@ -116,5 +134,11 @@ ButtonAppBar.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
+// приклеиваем данные из store
+const mapStateToProps = store => {
+    return {
+        user: store.user,
+    }
+};
 
-export default withStyles(styles)(ButtonAppBar);
+export default connect(mapStateToProps)(withStyles(styles)(ButtonAppBar));

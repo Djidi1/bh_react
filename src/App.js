@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import Typography from '@material-ui/core/Typography';
+
 import ButtonAppBar from './components/main'
+import ListThinks from './components/ListThinks'
 
 
 
@@ -10,7 +13,10 @@ class App extends Component {
         return (
             <div className="App">
                 <ButtonAppBar/>
-                {this.props.user}
+                <Typography variant="h6">
+                    Список покупок
+                </Typography>
+                <ListThinks/>
             </div>
         )
     }
