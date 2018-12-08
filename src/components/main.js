@@ -43,6 +43,10 @@ const styles = {
     username: {
         margin: '10px 0',
     },
+    useremail: {
+        margin: '10px 0',
+        color: '#999999'
+    },
 };
 
 
@@ -64,7 +68,7 @@ class ButtonAppBar extends React.Component {
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+                    {['Регистрация'].map((text, index) => (
                         <ListItem button key={text}>
                             <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
                             <ListItemText primary={text} />
@@ -73,7 +77,7 @@ class ButtonAppBar extends React.Component {
                 </List>
                 <Divider />
                 <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
+                    {['Мои заявки', 'Магазины'].map((text, index) => (
                         <ListItem button key={text}>
                             <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
                             <ListItemText primary={text} />
@@ -97,7 +101,7 @@ class ButtonAppBar extends React.Component {
                             <MenuIcon/>
                         </IconButton>
                         <Typography variant="h6" color="inherit" className={classes.grow}>
-                            БулкаХлеба
+                            {this.props.app_name}
                         </Typography>
                         <Button color="inherit">Login</Button>
                     </Toolbar>
@@ -115,10 +119,11 @@ class ButtonAppBar extends React.Component {
                     >
                         <Grid container wrap="nowrap" spacing={16}>
                             <Grid item>
-                                <Avatar className={classes.avatar}>{this.props.user[0]}</Avatar>
+                                <Avatar className={classes.avatar}>{this.props.user.name[0]}</Avatar>
                             </Grid>
                             <Grid item xs zeroMinWidth>
-                                <Typography className={classes.username} noWrap>{this.props.user}</Typography>
+                                <Typography className={classes.username} noWrap>{this.props.user.name}</Typography>
+                                <Typography className={classes.useremail} noWrap>{this.props.user.email}</Typography>
                             </Grid>
                         </Grid>
                         <Divider />
@@ -138,6 +143,7 @@ ButtonAppBar.propTypes = {
 const mapStateToProps = store => {
     return {
         user: store.user,
+        app_name: store.app.app_name,
     }
 };
 
