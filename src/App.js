@@ -1,14 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import Typography from '@material-ui/core/Typography';
-
 import ButtonAppBar from './components/main'
-import ListThinks from './components/ListThinks'
 
-import HomePage from './pages/Home'
-import AboutPage from './pages/About'
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Home, Login, About, Registration, Requests, Stores} from './pages'
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 
 
@@ -18,22 +14,12 @@ class App extends Component {
             <Router>
                 <div className="App">
                     <ButtonAppBar/>
-                    <Typography variant="h6">
-                        Список покупок
-                    </Typography>
-                    <ListThinks/>
-                    <nav>
-                        <ul>
-                            <li>
-                                <Link to="/">Home</Link>
-                            </li>
-                            <li>
-                                <Link to="/about/">About</Link>
-                            </li>
-                        </ul>
-                    </nav>
-                    <Route exact path='/' component={HomePage}/>
-                    <Route path='/about' component={AboutPage}/>
+                    <Route exact path='/' component={Home}/>
+                    <Route path='/stores' component={Stores}/>
+                    <Route path='/requests' component={Requests}/>
+                    <Route path='/registration' component={Registration}/>
+                    <Route path='/login' component={Login}/>
+                    <Route path='/about' component={About}/>
                 </div>
             </Router>
         )

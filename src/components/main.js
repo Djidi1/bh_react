@@ -2,12 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
+
+import { Link } from "react-router-dom";
+
+
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -16,8 +19,7 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import { Store, Info, AccountBox, SpeakerNotes, Home } from '@material-ui/icons';
 
 
 const styles = {
@@ -41,10 +43,10 @@ const styles = {
         margin: 10,
     },
     username: {
-        margin: '10px 0',
+        margin: '10px 0 0 0',
     },
     useremail: {
-        margin: '10px 0',
+        margin: '0 0 10px 0',
         color: '#999999'
     },
 };
@@ -53,12 +55,17 @@ const styles = {
 class ButtonAppBar extends React.Component {
     state = {
         left: false,
+        selectedIndex: 1,
     };
 
     toggleDrawer = (side, open) => () => {
         this.setState({
             [side]: open,
         });
+    };
+
+    handleListItemClick = (event, index) => {
+        this.setState({ selectedIndex: index });
     };
 
     render() {
@@ -68,22 +75,34 @@ class ButtonAppBar extends React.Component {
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    {['Регистрация'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItem>
-                    ))}
+                    <ListItem button key='menu_1' component={Link} to='/stores/'
+                              onClick={event => this.handleListItemClick(event, 1)}
+                              selected={this.state.selectedIndex === 1}>
+                        <ListItemIcon><Store /></ListItemIcon>
+                        <ListItemText primary='Магазины' />
+                    </ListItem>
+                    <ListItem button key='menu_2' component={Link} to='/requests/'
+                              onClick={event => this.handleListItemClick(event, 2)}
+                              selected={this.state.selectedIndex === 2}>
+                        <ListItemIcon><SpeakerNotes /></ListItemIcon>
+                        <ListItemText primary='Мои запросы' />
+                    </ListItem>
+                    <Divider />
+                    <ListItem button key='menu_4' component={Link} to='/login/'
+                              onClick={event => this.handleListItemClick(event, 3)}
+                              selected={this.state.selectedIndex === 4}>
+                        <ListItemIcon><AccountBox /></ListItemIcon>
+                        <ListItemText primary='Войти' />
+                    </ListItem>
+                    <Divider />
+                    <ListItem button key='menu_5' component={Link} to='/about/'
+                              onClick={event => this.handleListItemClick(event, 4)}
+                              selected={this.state.selectedIndex === 5}>
+                        <ListItemIcon><Info /></ListItemIcon>
+                        <ListItemText primary='О программе' />
+                    </ListItem>
                 </List>
-                <Divider />
-                <List>
-                    {['Мои заявки', 'Магазины'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItem>
-                    ))}
-                </List>
+
             </div>
         );
 
@@ -103,7 +122,7 @@ class ButtonAppBar extends React.Component {
                         <Typography variant="h6" color="inherit" className={classes.grow}>
                             {this.props.app_name}
                         </Typography>
-                        <Button color="inherit">Login</Button>
+                        <IconButton color="inherit" component={Link} to="/"><Home/></IconButton>
                     </Toolbar>
                 </AppBar>
                 <SwipeableDrawer
