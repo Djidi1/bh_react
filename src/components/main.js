@@ -3,8 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 
-import { Link } from "react-router-dom";
-
+import { NavLink } from "react-router-dom";
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -16,10 +15,9 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import { Store, Info, AccountBox, SpeakerNotes, Home } from '@material-ui/icons';
+import { Store, Info, AccountBox, Home } from '@material-ui/icons';
+
+import ListItemLink from '../components/ListItemLink';
 
 
 const styles = {
@@ -64,10 +62,6 @@ class ButtonAppBar extends React.Component {
         });
     };
 
-    handleListItemClick = (event, index) => {
-        this.setState({ selectedIndex: index });
-    };
-
     render() {
 
         const {classes} = this.props;
@@ -75,32 +69,10 @@ class ButtonAppBar extends React.Component {
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    <ListItem button key='menu_1' component={Link} to='/stores/'
-                              onClick={event => this.handleListItemClick(event, 1)}
-                              selected={this.state.selectedIndex === 1}>
-                        <ListItemIcon><Store /></ListItemIcon>
-                        <ListItemText primary='Магазины' />
-                    </ListItem>
-                    <ListItem button key='menu_2' component={Link} to='/requests/'
-                              onClick={event => this.handleListItemClick(event, 2)}
-                              selected={this.state.selectedIndex === 2}>
-                        <ListItemIcon><SpeakerNotes /></ListItemIcon>
-                        <ListItemText primary='Мои запросы' />
-                    </ListItem>
+                    <ListItemLink title='Список покупок' to='/wishlists/' icon={<Store/>}/>
+                    <ListItemLink title='Вход' to='/login/' icon={<AccountBox/>}/>
                     <Divider />
-                    <ListItem button key='menu_4' component={Link} to='/login/'
-                              onClick={event => this.handleListItemClick(event, 3)}
-                              selected={this.state.selectedIndex === 4}>
-                        <ListItemIcon><AccountBox /></ListItemIcon>
-                        <ListItemText primary='Войти' />
-                    </ListItem>
-                    <Divider />
-                    <ListItem button key='menu_5' component={Link} to='/about/'
-                              onClick={event => this.handleListItemClick(event, 4)}
-                              selected={this.state.selectedIndex === 5}>
-                        <ListItemIcon><Info /></ListItemIcon>
-                        <ListItemText primary='О программе' />
-                    </ListItem>
+                    <ListItemLink title='О программе' to='/about/' icon={<Info/>}/>
                 </List>
 
             </div>
@@ -122,7 +94,7 @@ class ButtonAppBar extends React.Component {
                         <Typography variant="h6" color="inherit" className={classes.grow}>
                             {this.props.app_name}
                         </Typography>
-                        <IconButton color="inherit" component={Link} to="/"><Home/></IconButton>
+                        <IconButton color="inherit" component={NavLink} to="/"><Home/></IconButton>
                     </Toolbar>
                 </AppBar>
                 <SwipeableDrawer

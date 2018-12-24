@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import ButtonAppBar from './components/main'
 
-import { Home, Login, About, Registration, Requests, Stores} from './pages'
+import { Home, Login, About, Registration, Requests, WishLists} from './pages'
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 
@@ -15,7 +15,7 @@ class App extends Component {
                 <div className="App">
                     <ButtonAppBar/>
                     <Route exact path='/' component={Home}/>
-                    <Route path='/stores' component={Stores}/>
+                    <Route path='/wishlists' component={WishLists}/>
                     <Route path='/requests' component={Requests}/>
                     <Route path='/registration' component={Registration}/>
                     <Route path='/login' component={Login}/>

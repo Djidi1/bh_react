@@ -11,13 +11,13 @@ const styles = {
 };
 
 
-class StoresPage extends React.Component {
+class WishListsPage extends React.Component {
     render() {
         const {classes} = this.props;
 
         return (
             <div className={classes.root}>
-                Stores Page
+                Список покупок
             </div>
         );
     }
@@ -31,4 +31,4 @@ const mapStateToProps = store => {
     }
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(StoresPage));
+export default connect(mapStateToProps)(withStyles(styles)(WishListsPage));
