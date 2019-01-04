@@ -6,6 +6,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 
+import Swipeout from 'rc-swipeout';
+import 'rc-swipeout/assets/index.css';
+
 const styles = theme => ({
     root: {
         width: '100%',
@@ -45,16 +48,33 @@ class ListThinks extends React.Component {
                 dense
                 disablePadding
                 className={classes.root}>
+
                 {[0, 1, 2, 3].map(value => (
-                    <ListItem key={value} role={undefined} dense button onClick={this.handleToggle(value)}>
-                        <Checkbox
-                            className={classes.checkbox}
-                            checked={this.state.checked.indexOf(value) !== -1}
-                            tabIndex={-1}
-                            disableRipple
-                        />
-                        <ListItemText primary={`Line item ${value + 1}`} />
-                    </ListItem>
+                    <Swipeout
+                        key={value}
+                        right={[
+                            {
+                                text: 'delete',
+                                onPress:() => console.log('delete'),
+                                style: { backgroundColor: 'red', color: 'white' },
+                                className: 'custom-class-2'
+                            }
+                        ]}
+                        onOpen={() => console.log('open')}
+                        onClose={() => console.log('close')}
+                    >
+                        <div style={{height: 44}}>
+                            <ListItem role={undefined} dense button onClick={this.handleToggle(value)}>
+                                <Checkbox
+                                    className={classes.checkbox}
+                                    checked={this.state.checked.indexOf(value) !== -1}
+                                    tabIndex={-1}
+                                    disableRipple
+                                />
+                                <ListItemText primary={`Line item ${value + 1}`} />
+                            </ListItem>
+                        </div>
+                    </Swipeout>
                 ))}
             </List>
         );

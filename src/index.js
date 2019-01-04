@@ -8,13 +8,20 @@ import * as ServiceWorker from './serviceWorker'
 
 import './index.css'
 
+const startApp = () => {
+    ReactDOM.render(
+        <Provider store={store}>
+            <App />
+        </Provider>,
+        document.getElementById('root')
+    );
 
+    ServiceWorker.register();
+};
 
-ReactDOM.render(
-    <Provider store={store}>
-        <App />
-    </Provider>,
-    document.getElementById('root')
-);
+if(!window.cordova) {
+    startApp()
+} else {
+    document.addEventListener('deviceready', startApp, false)
+}
 
-ServiceWorker.register();

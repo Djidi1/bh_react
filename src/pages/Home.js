@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import {withStyles} from '@material-ui/core/styles';
 
+import ListThinks from '../components/ListThinks'
 
 
 const styles = {
@@ -17,7 +18,7 @@ class HomePage extends React.Component {
 
         return (
             <div className={classes.root}>
-                Home Page
+                <ListThinks/>
             </div>
         );
     }
