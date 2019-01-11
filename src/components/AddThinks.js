@@ -7,6 +7,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import AddCircle from '@material-ui/icons/AddCircle';
 
+
 const styles = theme => ({
     root: {
         display: 'flex',
@@ -23,19 +24,18 @@ const styles = theme => ({
 
 class AddThinks extends React.Component {
     state = {
-        amount: '',
-        password: '',
-        weight: '',
-        weightRange: '',
-        showPassword: false,
+        new_item: ''
     };
 
     handleChange = prop => event => {
         this.setState({ [prop]: event.target.value });
     };
 
-    handleClickShowPassword = () => {
-        this.setState(state => ({ showPassword: !state.showPassword }));
+    handleClickAddItem = () => {
+        console.log(this.state.new_item);
+        let new_item = {};
+        new_item.title = this.state.new_item;
+        this.props.setItem(new_item)
     };
 
     render() {
@@ -46,16 +46,16 @@ class AddThinks extends React.Component {
                     id="outlined-adornment-password"
                     className={classNames(classes.margin, classes.textField)}
                     variant="outlined"
-                    label="New think"
+                    label="New item"
                     value={this.state.password}
-                    onChange={this.handleChange('password')}
+                    onChange={this.handleChange('new_item')}
                     fullWidth
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
                                 <IconButton
                                     aria-label="Toggle password visibility"
-                                    onClick={this.handleClickShowPassword}
+                                    onClick={this.handleClickAddItem}
                                 >
                                     {<AddCircle />}
                                 </IconButton>
@@ -69,6 +69,9 @@ class AddThinks extends React.Component {
 
 AddThinks.propTypes = {
     classes: PropTypes.object.isRequired,
+    setItem: PropTypes.func.isRequired,
 };
+
+
 
 export default withStyles(styles)(AddThinks);
