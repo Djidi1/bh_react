@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
@@ -9,30 +9,29 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Swipeout from 'rc-swipeout';
 import 'rc-swipeout/assets/index.css';
 
+import AddThinks from './AddThinks'
 
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Visibility from '@material-ui/icons/Visibility';
-import TextField from "@material-ui/core/TextField";
 
-const styles = theme => ({
+
+
+const styles = () => ({
     root: {
         width: '100%',
-        backgroundColor: theme.palette.background.paper,
     },
     checkbox: {
         padding: 0,
     },
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        margin: '16px 8px',
+        width: 'calc(100% - 30px)'
     },
 });
 
-class ListThinks extends React.Component {
+
+
+class ListItems extends React.Component {
     state = {
         checked: [0],
-        think: ''
     };
 
     handleToggle = value => () => {
@@ -50,31 +49,10 @@ class ListThinks extends React.Component {
             checked: newChecked,
         });
     };
-
     render() {
         const { classes } = this.props;
 
         return (
-            <div>
-                <TextField
-                    id="outlined-adornment-add"
-                    variant="outlined"
-                    type={ 'text' }
-                    label="Goods"
-                    value={''}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="Add"
-                                    onClick={console.log('push')}
-                                >
-                                    <Visibility />
-                                </IconButton>
-                            </InputAdornment>
-                        ),
-                    }}
-                />
                 <List
                     dense
                     disablePadding
@@ -108,8 +86,20 @@ class ListThinks extends React.Component {
                         </Swipeout>
                     ))}
                 </List>
+            );
+    }
+}
+
+class ListThinks extends Component {
+    render() {
+        const { classes } = this.props;
+
+        return (
+            <div>
+                <AddThinks/>
+                <ListItems classes={classes}/>
             </div>
-        );
+        )
     }
 }
 

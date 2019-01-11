@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import ButtonAppBar from './components/main'
 
 import { Home, Login, About, Registration, Requests, WishLists} from './pages'
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { HashRouter as Router, Route } from "react-router-dom";
 
 
 
