@@ -18,7 +18,7 @@ class HomePage extends React.Component {
 
         return (
             <div className={classes.root}>
-                <ListThinks/>
+                <ListThinks />
             </div>
         );
     }

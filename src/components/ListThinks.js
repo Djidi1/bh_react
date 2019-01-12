@@ -10,12 +10,11 @@ import removeItem from '../actions/removeItems'
 
 class ListThinks extends Component {
     render() {
-        const { items, setItemAction, removeItemAction } = this.props;
-
+        const { setItemAction, removeItemAction } = this.props;
         return (
             <div>
                 <AddThinks setItem={setItemAction}/>
-                <ListItems items={items} removeItem={removeItemAction}/>
+                <ListItems removeItem={removeItemAction}/>
             </div>
         )
     }
@@ -24,7 +23,7 @@ class ListThinks extends Component {
 // приклеиваем данные из store
 const mapStateToProps = store => {
     return {
-        items: store.app.items,
+        items1: store.app.items,
     }
 };
 

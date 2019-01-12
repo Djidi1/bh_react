@@ -1,14 +1,31 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-
-import ButtonAppBar from './components/main'
-
-import { Home, Login, About, Registration, Requests, WishLists} from './pages'
+import React, { Component } from 'react';
+import {connect} from "react-redux";
 import { HashRouter as Router, Route } from "react-router-dom";
+import { openDb } from "idb";
 
+import ButtonAppBar from './components/main';
+import { Home, Login, About, Registration, Requests, WishLists} from './pages';
+import writeItems from "./actions/writeItems";
 
+async function getAllData(props) {
+    let db = await openDb('bh_db', 1);
+    let tx = db.transaction('items', 'readonly');
+    let store = tx.objectStore('items');
+    // add, clear, count, delete, get, getAll, getAllKeys, getKey, put
+    let allSavedItems = await store.getAll();
+    props.writeItemsAction(allSavedItems);
+    db.close();
+    return allSavedItems;
+}
 
 class App extends Component {
+
+    async componentDidMount() {
+        const items = await getAllData(this.props);
+        this.setState({
+            items: items
+        });
+    }
     render() {
         return (
             <Router>
@@ -29,8 +46,14 @@ class App extends Component {
 // приклеиваем данные из store
 const mapStateToProps = store => {
     return {
-        user: store.user,
+        items: store.app.items,
     }
 };
 
-export default connect(mapStateToProps)(App)
+const mapDispatchToProps = dispatch => {
+    return {
+        writeItemsAction: items => dispatch(writeItems(items)),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)

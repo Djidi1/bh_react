@@ -8,6 +8,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 import Swipeout from 'rc-swipeout';
 import 'rc-swipeout/assets/index.css';
+import connect from "react-redux/es/connect/connect";
 
 
 const styles = () => ({
@@ -26,9 +27,13 @@ const styles = () => ({
 
 
 class ListItems extends React.Component {
-    state = {
-        checked: [0],
-    };
+    constructor() {
+        super();
+        this.state = {
+            checked: [0],
+        };
+    }
+
 
     handleToggle = value => () => {
         const { checked } = this.state;
@@ -53,13 +58,15 @@ class ListItems extends React.Component {
     render() {
         const { classes } = this.props;
 
+        let items = this.props.items || [];
+
         return (
             <List
                 dense
                 disablePadding
                 className={classes.root}>
 
-                {this.props.items.map((value, index) => (
+                {items.map((value, index) => (
                     <Swipeout
                         key={index}
                         right={[
@@ -96,5 +103,12 @@ ListItems.propTypes = {
     removeItem: PropTypes.func.isRequired,
 };
 
+// приклеиваем данные из store
+const mapStateToProps = store => {
+    return {
+        items: store.app.items,
+    }
+};
 
-export default withStyles(styles)(ListItems);
+
+export default connect(mapStateToProps)(withStyles(styles)(ListItems));

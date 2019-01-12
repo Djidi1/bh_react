@@ -32,10 +32,11 @@ class AddThinks extends React.Component {
     };
 
     handleClickAddItem = () => {
-        console.log(this.state.new_item);
         let new_item = {};
         new_item.title = this.state.new_item;
-        this.props.setItem(new_item)
+        // reset value
+        this.setState({ new_item: '' });
+        this.props.setItem(new_item);
     };
 
     render() {
@@ -47,7 +48,7 @@ class AddThinks extends React.Component {
                     className={classNames(classes.margin, classes.textField)}
                     variant="outlined"
                     label="New item"
-                    value={this.state.password}
+                    value={this.state.new_item}
                     onChange={this.handleChange('new_item')}
                     fullWidth
                     InputProps={{
