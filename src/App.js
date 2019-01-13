@@ -8,14 +8,19 @@ import { Home, Login, About, Registration, Requests, WishLists} from './pages';
 import writeItems from "./actions/writeItems";
 
 async function getAllData(props) {
-    let db = await openDb('bh_db', 1);
-    let tx = db.transaction('items', 'readonly');
-    let store = tx.objectStore('items');
-    // add, clear, count, delete, get, getAll, getAllKeys, getKey, put
-    let allSavedItems = await store.getAll();
-    props.writeItemsAction(allSavedItems);
-    db.close();
-    return allSavedItems;
+    openDb('bh_db', 1, upgradeDB => {
+        if (upgradeDB.oldVersion === 0) {
+            upgradeDB.createObjectStore("items", {keyPath: "id", autoIncrement: true});
+        }
+    }).then(async db => {
+        let tx = db.transaction('items', 'readonly');
+        let store = tx.objectStore('items');
+        // add, clear, count, delete, get, getAll, getAllKeys, getKey, put
+        let allSavedItems = await store.getAll();
+        props.writeItemsAction(allSavedItems);
+        db.close();
+        return allSavedItems;
+    });
 }
 
 class App extends Component {

@@ -13,11 +13,16 @@ import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import DeleteIcon from '@material-ui/icons/DeleteForever';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import { Store, Info, AccountBox, Home } from '@material-ui/icons';
 
 import ListItemLink from '../components/ListItemLink';
+import deleteIndexedDB from "../actions/deleteIndexedDB";
+import ListItem from "@material-ui/core/ListItem/ListItem";
+import ListItemText from "@material-ui/core/ListItemText/ListItemText";
+import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
 
 
 const styles = {
@@ -73,6 +78,13 @@ class ButtonAppBar extends React.Component {
                     <ListItemLink title='Вход' to='/login/' icon={<AccountBox/>}/>
                     <Divider />
                     <ListItemLink title='О программе' to='/about/' icon={<Info/>}/>
+                    <Divider />
+                    <ListItem button onClick={() => this.props.deleteIndexedDBAction()}>
+                        <ListItemIcon>
+                            <DeleteIcon/>
+                        </ListItemIcon>
+                        <ListItemText primary="Очистить БД"/>
+                    </ListItem>
                 </List>
 
             </div>
@@ -138,4 +150,10 @@ const mapStateToProps = store => {
     }
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(ButtonAppBar));
+const mapDispatchToProps = dispatch => {
+    return {
+        deleteIndexedDBAction: () => dispatch(deleteIndexedDB()),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ButtonAppBar));

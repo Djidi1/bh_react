@@ -1,46 +1,28 @@
+import { openDb, deleteDb } from 'idb';
+
 export const initialState = {
     app_name: 'BulkaHleba',
     items: [{title: 'test'}]
 };
 
+
+
 function updateIndexDB(items) {
-    // Open or create data base
-    let request = indexedDB.open("bh_db", 1);
-
-    // If DB allready created
-    request.onsuccess = function(event) {
-        // get DB object
-        let db = event.target.result;
-        // init transaction and select store name
-        let items_transaction = db.transaction(["items"], "readwrite").objectStore("items");
-        // Clear all data in store
-        items_transaction.clear();
-        // add updated items
+    openDb('bh_db', 1).then(db => {
+        const tx = db.transaction('items', 'readwrite');
+        tx.objectStore('items').clear();
+        // tx.objectStore('items').put(items);
         items.forEach(function(item){
-            items_transaction.put(item);
+            tx.objectStore('items').put(item);
         });
-    };
-
-    // If that is new data base
-    request.onupgradeneeded = function(event) {
-        // get DB object
-        let db = event.target.result;
-        // create store
-        db.createObjectStore("items", { keyPath: "id", autoIncrement : true });
-        // init transaction and select store name
-        let items_transaction = event.target.transaction.objectStore(["items"], "readwrite");
-        // add updated items
-        items.forEach(function(product){
-            items_transaction.add(product);
-        });
-    };
-
-    // catch error exception
-    request.onerror = function() {
-        console.log('[onerror]', request.error);
-    };
+        return tx.complete;
+    }).then(() => console.log("Done!"));
 }
 
+function deleteIndexDB() {
+    console.log('clear DB');
+    deleteDb('bh_db');
+}
 
 
 
@@ -63,6 +45,15 @@ export function appReducer(state = initialState, action) {
         case 'WRITE_ITEMS': {
             let exist_items = action.payload;
             return {...state, items: exist_items};
+        }
+        case 'UPDATE_ITEMS': {
+            let items = action.payload;
+            updateIndexDB(items);
+            return {...state, items: items};
+        }
+        case 'DELETE_DB': {
+            deleteIndexDB();
+            return state;
         }
         default:
             return state
