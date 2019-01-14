@@ -27,6 +27,10 @@ const styles = () => ({
         margin: '16px 8px',
         width: 'calc(100% - 30px)'
     },
+    listItem: {
+        margin: '2px 8px',
+        borderRadius: '4px'
+    },
 });
 
 const DragHandle = SortableHandle(() => <span><DragIndicator color={"action"}/></span>);
@@ -104,6 +108,7 @@ class ListItemComponent extends Component {
         const { classes, index, value } = this.props;
         return <Swipeout
             key={index}
+            className={'rc-swipeout ' + classes.listItem}
             right={[
                 {
                     text: 'delete',

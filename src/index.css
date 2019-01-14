@@ -15,3 +15,13 @@ code {
 html {
   -webkit-user-select: none;
 }
+
+html, body {
+  min-height: 100%;
+}
+
+body {
+  background: #E0EAFC;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #3F51B5, #E8EAF6);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, #3F51B5, #E8EAF6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}

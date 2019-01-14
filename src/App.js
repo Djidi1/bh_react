@@ -24,12 +24,11 @@ async function getAllData(props) {
 }
 
 class App extends Component {
-
-    async componentDidMount() {
-        const items = await getAllData(this.props);
-        this.setState({
-            items: items
-        });
+    componentDidMount() {
+        (async () => {
+            const items = await getAllData(this.props);
+            this.setState({items: items});
+        })()
     }
     render() {
         return (

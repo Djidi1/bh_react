@@ -18,7 +18,8 @@ const styles = theme => ({
     },
     textField: {
         margin: '16px 8px',
-        width: 'calc(100% - 30px)'
+        width: 'calc(100% - 30px)',
+        color: '#FFFFFF'
     },
 });
 
