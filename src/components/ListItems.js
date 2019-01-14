@@ -6,12 +6,13 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
+import DragIndicator from '@material-ui/icons/DragIndicator';
 
 import updateItems from "../actions/updateItems";
 
 import Swipeout from 'rc-swipeout';
 import 'rc-swipeout/assets/index.css';
-import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
+import {SortableContainer, SortableElement, arrayMove, SortableHandle} from 'react-sortable-hoc';
 
 
 
@@ -28,29 +29,49 @@ const styles = () => ({
     },
 });
 
-const SortableItem = SortableElement(({value}) => <li>{value}</li>);
+const DragHandle = SortableHandle(() => <span><DragIndicator color={"action"}/></span>);
 
-const SortableList = SortableContainer(({items}) => {
+const SortableItem = SortableElement(({value, index, classes, removeItem}) =>
+        <ListItemComponent index={index} value={value} classes={classes} removeItem={removeItem}/>
+);
+
+const SortableList = SortableContainer(({items,classes,removeItem}) => {
     return (
-        <ul>
+        <List
+            dense
+            disablePadding
+            className={classes.root}
+        >
+
             {items.map((item, index) => (
-                <SortableItem key={`item-${index}`} index={index} value={item.title} />
+                <SortableItem key={`item-${index}`} classes={classes} removeItem={removeItem} index={index} value={item} />
             ))}
-        </ul>
+        </List>
     );
 });
 
 class SortableComponent extends Component {
     onSortEnd = ({oldIndex, newIndex}) => {
-        let sorted_array =arrayMove(this.props.items, oldIndex, newIndex);
+        let sorted_array = arrayMove(this.props.items, oldIndex, newIndex);
+        sorted_array.forEach(function(item, index){
+            item.order = index;
+        });
         this.props.update_items(sorted_array);
     };
     render() {
-        return <SortableList items={this.props.items} onSortEnd={this.onSortEnd} />;
+        return <SortableList
+            removeItem={this.props.removeItem}
+            classes={this.props.classes}
+            items={this.props.items}
+            onSortEnd={this.onSortEnd}
+            lockAxis={'y'}
+            useDragHandle
+            lockToContainerEdges={true}
+        />;
     }
 }
 
-class ListItems extends React.Component {
+class ListItemComponent extends Component {
     constructor() {
         super();
         this.state = {
@@ -80,46 +101,58 @@ class ListItems extends React.Component {
     };
 
     render() {
+        const { classes, index, value } = this.props;
+        return <Swipeout
+            key={index}
+            right={[
+                {
+                    text: 'delete',
+                    onPress: this.handleClickRemoveItem(index),
+                    style: { backgroundColor: 'red', color: 'white' },
+                    className: 'custom-class-2'
+                }
+            ]}
+            // onOpen={() => console.log('open')}
+            // onClose={() => console.log('close')}
+        >
+            <ListItem
+                role={undefined}
+                disableRipple
+                dense
+                button
+                onClick={this.handleToggle(value)}>
+                <Checkbox
+                    className={classes.checkbox}
+                    checked={this.state.checked.indexOf(value) !== -1}
+                    tabIndex={-1}
+                    disableRipple
+                />
+                <ListItemText primary={value.title} />
+                <DragHandle />
+            </ListItem>
+        </Swipeout>;
+    }
+}
+
+class ListItems extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            checked: [0],
+        };
+    }
+
+    render() {
         const { classes } = this.props;
-
         let items = this.props.items || [];
-
         return (
             <div>
-                <SortableComponent items={items} update_items={this.props.updateItemsAction}/>
-                <List
-                    dense
-                    disablePadding
-                    className={classes.root}>
-
-                    {items.map((value, index) => (
-                        <Swipeout
-                            key={index}
-                            right={[
-                                {
-                                    text: 'delete',
-                                    onPress: this.handleClickRemoveItem(index),
-                                    style: { backgroundColor: 'red', color: 'white' },
-                                    className: 'custom-class-2'
-                                }
-                            ]}
-                            // onOpen={() => console.log('open')}
-                            // onClose={() => console.log('close')}
-                        >
-                            <div style={{height: 44}}>
-                                <ListItem role={undefined} dense button onClick={this.handleToggle(value)}>
-                                    <Checkbox
-                                        className={classes.checkbox}
-                                        checked={this.state.checked.indexOf(value) !== -1}
-                                        tabIndex={-1}
-                                        disableRipple
-                                    />
-                                    <ListItemText primary={value.title} />
-                                </ListItem>
-                            </div>
-                        </Swipeout>
-                    ))}
-                </List>
+                <SortableComponent
+                    items={items}
+                    classes={classes}
+                    removeItem={this.props.removeItem}
+                    update_items={this.props.updateItemsAction}
+                />
             </div>
         );
     }
@@ -133,7 +166,7 @@ ListItems.propTypes = {
 // приклеиваем данные из store
 const mapStateToProps = store => {
     return {
-        items: store.app.items,
+        items: store.app.items.sort((a, b) => parseInt(a.order) - parseInt(b.order)).filter(() => true),
     }
 };
 

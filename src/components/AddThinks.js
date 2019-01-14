@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
-import AddCircle from '@material-ui/icons/AddCircle';
+import SendIcon from '@material-ui/icons/Send';
 
 
 const styles = theme => ({
@@ -58,7 +58,7 @@ class AddThinks extends React.Component {
                                     aria-label="Toggle password visibility"
                                     onClick={this.handleClickAddItem}
                                 >
-                                    {<AddCircle />}
+                                    {<SendIcon />}
                                 </IconButton>
                             </InputAdornment>
                         ),
