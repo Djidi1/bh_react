@@ -19,8 +19,27 @@ const styles = theme => ({
     textField: {
         margin: '16px 8px',
         width: 'calc(100% - 30px)',
-        color: '#FFFFFF'
     },
+    cssOutlinedInput: {
+        '&$cssFocused $notchedOutline': {
+            borderColor: '#FFFFFF',
+        },
+        color: '#FFFFFF',
+    },
+    cssLabel: {
+        '&$cssFocused': {
+            color: '#FFFFFF',
+        },
+        color: '#FFFFFF',
+    },
+    cssFocused: {},
+    notchedOutline: {
+        borderColor: '#FFFFFF !important',
+    },
+    cssIcon: {
+        color: '#FFFFFF',
+        marginRight: '-8px',
+    }
 });
 
 class AddThinks extends React.Component {
@@ -39,27 +58,47 @@ class AddThinks extends React.Component {
         this.setState({ new_item: '' });
         this.props.setItem(new_item);
     };
+    handleKeyPress = (event) => {
+        if(event.key === 'Enter'){
+            this.handleClickAddItem();
+        }
+    };
 
     render() {
         const { classes } = this.props;
 
         return (
                 <TextField
-                    id="outlined-adornment-password"
+                    id="outlined-adornment-item"
                     className={classNames(classes.margin, classes.textField)}
+                    InputLabelProps={{
+                        classes: {
+                            root: classes.cssLabel,
+                            focused: classes.cssFocused,
+                        },
+                    }}
                     variant="outlined"
                     label="New item"
                     value={this.state.new_item}
                     onChange={this.handleChange('new_item')}
+                    onKeyPress={this.handleKeyPress}
                     fullWidth
                     InputProps={{
+                        classes: {
+                            root: classes.cssOutlinedInput,
+                            focused: classes.cssFocused,
+                            notchedOutline: classes.notchedOutline,
+                        },
                         endAdornment: (
                             <InputAdornment position="end">
                                 <IconButton
                                     aria-label="Toggle password visibility"
                                     onClick={this.handleClickAddItem}
+                                    className={classNames(classes.cssIcon)}
+                                    disabled={this.state.new_item === ''}
                                 >
-                                    {<SendIcon />}
+                                    {<SendIcon
+                                    color={"inherit"}/>}
                                 </IconButton>
                             </InputAdornment>
                         ),
