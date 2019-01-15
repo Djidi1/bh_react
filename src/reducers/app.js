@@ -2,7 +2,7 @@ import { openDb, deleteDb } from 'idb';
 
 export const initialState = {
     app_name: 'BulkaHleba',
-    items: [{title: 'test'}]
+    items: []
 };
 
 
@@ -39,6 +39,12 @@ export function appReducer(state = initialState, action) {
         case 'REMOVE_ITEM': {
             let new_items = [...state.items];
             new_items.splice(action.payload, 1);
+            updateIndexDB(new_items);
+            return {...state, items: new_items};
+        }
+        case 'CHECK_ITEM': {
+            let new_items = [...state.items];
+            new_items.find(x => x === action.payload).checked = !(new_items.find(x => x === action.payload).checked);
             updateIndexDB(new_items);
             return {...state, items: new_items};
         }

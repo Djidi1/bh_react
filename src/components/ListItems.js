@@ -14,6 +14,8 @@ import Swipeout from 'rc-swipeout';
 import 'rc-swipeout/assets/index.css';
 import {SortableContainer, SortableElement, arrayMove, SortableHandle} from 'react-sortable-hoc';
 
+import Switch from '@material-ui/core/Switch';
+import Grow from '@material-ui/core/Grow';
 
 
 const styles = () => ({
@@ -31,15 +33,18 @@ const styles = () => ({
         margin: '2px 8px',
         borderRadius: '4px'
     },
+    container: {
+        display: 'flex',
+    },
 });
 
 const DragHandle = SortableHandle(() => <span><DragIndicator color={"action"}/></span>);
 
-const SortableItem = SortableElement(({value, index, classes, removeItem}) =>
-        <ListItemComponent index={index} value={value} classes={classes} removeItem={removeItem}/>
+const SortableItem = SortableElement(({value, index, classes, removeItem, checkItem}) =>
+        <ListItemComponent index={index} value={value} classes={classes} removeItem={removeItem} checkItem={checkItem}/>
 );
 
-const SortableList = SortableContainer(({items,classes,removeItem}) => {
+const SortableList = SortableContainer(({items,classes,removeItem,checkItem}) => {
     return (
         <List
             dense
@@ -48,7 +53,7 @@ const SortableList = SortableContainer(({items,classes,removeItem}) => {
         >
 
             {items.map((item, index) => (
-                <SortableItem key={`item-${index}`} classes={classes} removeItem={removeItem} index={index} value={item} />
+                <SortableItem key={`item-${index}`} classes={classes} removeItem={removeItem} checkItem={checkItem} index={index} value={item} />
             ))}
         </List>
     );
@@ -65,6 +70,7 @@ class SortableComponent extends Component {
     render() {
         return <SortableList
             removeItem={this.props.removeItem}
+            checkItem={this.props.checkItem}
             classes={this.props.classes}
             items={this.props.items}
             onSortEnd={this.onSortEnd}
@@ -79,25 +85,22 @@ class ListItemComponent extends Component {
     constructor() {
         super();
         this.state = {
-            checked: [0],
+            checked: false,
         };
     }
 
+    componentDidMount() {
+        this.setState({
+            checked: this.props.value.checked || false
+        });
+    }
 
     handleToggle = value => () => {
-        const { checked } = this.state;
-        const currentIndex = checked.indexOf(value);
-        const newChecked = [...checked];
-
-        if (currentIndex === -1) {
-            newChecked.push(value);
-        } else {
-            newChecked.splice(currentIndex, 1);
-        }
-
         this.setState({
-            checked: newChecked,
+            checked: value.checked,
         });
+
+        this.props.checkItem(value)
     };
 
     handleClickRemoveItem = index => () => {
@@ -128,7 +131,7 @@ class ListItemComponent extends Component {
                 onClick={this.handleToggle(value)}>
                 <Checkbox
                     className={classes.checkbox}
-                    checked={this.state.checked.indexOf(value) !== -1}
+                    checked={this.state.checked}
                     tabIndex={-1}
                     disableRipple
                 />
@@ -140,24 +143,45 @@ class ListItemComponent extends Component {
 }
 
 class ListItems extends React.Component {
-    constructor() {
-        super();
-        this.state = {
-            checked: [0],
-        };
-    }
+    state = {
+        checked: false,
+    };
+
+    handleChange = () => {
+        this.setState(state => ({ checked: !state.checked }));
+    };
 
     render() {
         const { classes } = this.props;
+        const { checked } = this.state;
+
         let items = this.props.items || [];
+        let checked_items = this.props.checked_items || [];
+
+        const polygon = (
+            <SortableComponent
+                items={checked_items}
+                classes={classes}
+                removeItem={this.props.removeItem}
+                checkItem={this.props.checkItem}
+                update_items={this.props.updateItemsAction}
+            />
+        );
+
         return (
             <div>
                 <SortableComponent
                     items={items}
                     classes={classes}
                     removeItem={this.props.removeItem}
+                    checkItem={this.props.checkItem}
                     update_items={this.props.updateItemsAction}
                 />
+                <Switch checked={checked} onChange={this.handleChange} aria-label="Collapse" />
+                <div className={classes.container}>
+                    <Grow in={checked}>{polygon}</Grow>
+                </div>
+
             </div>
         );
     }
@@ -166,12 +190,14 @@ class ListItems extends React.Component {
 ListItems.propTypes = {
     classes: PropTypes.object.isRequired,
     removeItem: PropTypes.func.isRequired,
+    checkItem: PropTypes.func.isRequired,
 };
 
 // приклеиваем данные из store
 const mapStateToProps = store => {
     return {
-        items: store.app.items.sort((a, b) => parseInt(a.order) - parseInt(b.order)).filter(() => true),
+        items: store.app.items.sort((a, b) => parseInt(a.order) - parseInt(b.order)).filter(x => !x.checked),
+        checked_items: store.app.items.sort((a, b) => parseInt(a.order) - parseInt(b.order)).filter(x => x.checked),
     }
 };
 

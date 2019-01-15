@@ -6,15 +6,16 @@ import ListItems from './ListItems'
 
 import setItem from '../actions/addItems'
 import removeItem from '../actions/removeItems'
+import checkItem from '../actions/checkItems'
 
 
 class ListThinks extends Component {
     render() {
-        const { setItemAction, removeItemAction } = this.props;
+        const { setItemAction, removeItemAction, checkItemAction } = this.props;
         return (
             <div>
                 <AddThinks setItem={setItemAction}/>
-                <ListItems removeItem={removeItemAction}/>
+                <ListItems removeItem={removeItemAction} checkItem={checkItemAction}/>
             </div>
         )
     }
@@ -31,6 +32,7 @@ const mapDispatchToProps = dispatch => {
     return {
         setItemAction: item => dispatch(setItem(item)),
         removeItemAction: item => dispatch(removeItem(item)),
+        checkItemAction: item => dispatch(checkItem(item)),
     }
 };
 

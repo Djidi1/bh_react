@@ -33,10 +33,14 @@ const styles = theme => ({
         color: '#FFFFFF',
     },
     cssFocused: {},
+    cssDisabled: {},
     notchedOutline: {
         borderColor: '#FFFFFF !important',
     },
     cssIcon: {
+        '&$cssDisabled': {
+            color: '#FFFFFF42',
+        },
         color: '#FFFFFF',
         marginRight: '-8px',
     }
@@ -94,7 +98,10 @@ class AddThinks extends React.Component {
                                 <IconButton
                                     aria-label="Toggle password visibility"
                                     onClick={this.handleClickAddItem}
-                                    className={classNames(classes.cssIcon)}
+                                    classes={{
+                                        root: classes.cssIcon,
+                                        disabled: classes.cssDisabled
+                                    }}
                                     disabled={this.state.new_item === ''}
                                 >
                                     {<SendIcon
