@@ -5,19 +5,21 @@ import { openDb } from "idb";
 
 import ButtonAppBar from './components/main';
 import { Home, Login, About, Registration, Requests, WishLists} from './pages';
-import writeItems from "./actions/writeItems";
+import updateItems from "./actions/updateItems";
 
-async function getAllData(props) {
+
+
+
+async function getAllData(props, table) {
     openDb('bh_db', 1, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
-            upgradeDB.createObjectStore("items", {keyPath: "id", autoIncrement: true});
+            upgradeDB.createObjectStore(table, {keyPath: "key", autoIncrement: true});
         }
     }).then(async db => {
-        let tx = db.transaction('items', 'readonly');
-        let store = tx.objectStore('items');
-        // add, clear, count, delete, get, getAll, getAllKeys, getKey, put
+        let tx = db.transaction(table, 'readonly');
+        let store = tx.objectStore(table);
         let allSavedItems = await store.getAll();
-        props.writeItemsAction(allSavedItems);
+        props.writeItemsAction(allSavedItems, table);
         db.close();
         return allSavedItems;
     });
@@ -26,8 +28,9 @@ async function getAllData(props) {
 class App extends Component {
     componentDidMount() {
         (async () => {
-            const items = await getAllData(this.props);
-            this.setState({items: items});
+            const items = await getAllData(this.props, 'items');
+            const done_items = await getAllData(this.props, 'done_items');
+            this.setState({items: items, done_items: done_items});
         })()
     }
     render() {
@@ -56,7 +59,7 @@ const mapStateToProps = store => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        writeItemsAction: items => dispatch(writeItems(items)),
+        writeItemsAction: (items, table) => dispatch(updateItems(items, table)),
     }
 };
 

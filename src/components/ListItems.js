@@ -7,20 +7,21 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import DragIndicator from '@material-ui/icons/DragIndicator';
-
-import updateItems from "../actions/updateItems";
+import DeleteForever from '@material-ui/icons/DeleteForever';
 
 import Swipeout from 'rc-swipeout';
 import 'rc-swipeout/assets/index.css';
 import {SortableContainer, SortableElement, arrayMove, SortableHandle} from 'react-sortable-hoc';
 
 import Switch from '@material-ui/core/Switch';
-import Grow from '@material-ui/core/Grow';
+import Collapse from "@material-ui/core/Collapse/Collapse";
+import updateIDB from "./updateIndexDB";
 
 
 const styles = () => ({
     root: {
         width: '100%',
+        opacity: 0.9,
     },
     checkbox: {
         padding: 0,
@@ -32,9 +33,6 @@ const styles = () => ({
     listItem: {
         margin: '2px 8px',
         borderRadius: '4px'
-    },
-    container: {
-        display: 'flex',
     },
 });
 
@@ -65,16 +63,15 @@ class SortableComponent extends Component {
         sorted_array.forEach(function(item, index){
             item.order = index;
         });
-        this.props.update_items(sorted_array);
+        updateIDB({type: 'UPDATE_ITEMS', payload: sorted_array}, this.props.table).then();
     };
     render() {
         return <SortableList
-            removeItem={this.props.removeItem}
-            checkItem={this.props.checkItem}
             classes={this.props.classes}
             items={this.props.items}
             onSortEnd={this.onSortEnd}
             lockAxis={'y'}
+            helperClass={'drag-item'}
             useDragHandle
             lockToContainerEdges={true}
         />;
@@ -82,30 +79,27 @@ class SortableComponent extends Component {
 }
 
 class ListItemComponent extends Component {
-    constructor() {
-        super();
-        this.state = {
-            checked: false,
-        };
-    }
 
-    componentDidMount() {
-        this.setState({
-            checked: this.props.value.checked || false
-        });
-    }
-
-    handleToggle = value => () => {
-        this.setState({
-            checked: value.checked,
-        });
-
-        this.props.checkItem(value)
+    handleToggle = item => () => {
+        console.log(item);
+        item.checked = !item.checked;
+        let from = 'items';
+        let to = 'done_items';
+        if (!item.checked) {
+            from = 'done_items';
+            to = 'items';
+        }
+        updateIDB({type: 'CHECK_ITEM', payload: item, from: from, to: to}).then();
     };
 
-    handleClickRemoveItem = index => () => {
-        this.props.removeItem(index)
+    handleClickRemoveItem = item => () => {
+        let table = item.checked ? 'done_items' : 'items';
+        updateIDB({type: 'REMOVE_ITEM', payload: item}, table).then();
     };
+
+   /* handleChangeClass = item => () => {
+        item.moving = true;
+    };*/
 
     render() {
         const { classes, index, value } = this.props;
@@ -114,26 +108,26 @@ class ListItemComponent extends Component {
             className={'rc-swipeout ' + classes.listItem}
             right={[
                 {
-                    text: 'delete',
-                    onPress: this.handleClickRemoveItem(index),
+                    component: <DeleteForever/>,
+                    onPress: this.handleClickRemoveItem(value),
                     style: { backgroundColor: 'red', color: 'white' },
                     className: 'custom-class-2'
                 }
             ]}
+            autoClose={true}
             // onOpen={() => console.log('open')}
             // onClose={() => console.log('close')}
         >
             <ListItem
                 role={undefined}
-                disableRipple
                 dense
-                button
-                onClick={this.handleToggle(value)}>
+                >
                 <Checkbox
                     className={classes.checkbox}
-                    checked={this.state.checked}
+                    checked={value.checked}
                     tabIndex={-1}
                     disableRipple
+                    onClick={this.handleToggle(value)}
                 />
                 <ListItemText primary={value.title} />
                 <DragHandle />
@@ -144,44 +138,35 @@ class ListItemComponent extends Component {
 
 class ListItems extends React.Component {
     state = {
-        checked: false,
+        fade_checked: false,
     };
 
     handleChange = () => {
-        this.setState(state => ({ checked: !state.checked }));
+        this.setState(state => ({ fade_checked: !state.fade_checked }));
     };
 
     render() {
         const { classes } = this.props;
-        const { checked } = this.state;
+        const { fade_checked } = this.state;
 
         let items = this.props.items || [];
-        let checked_items = this.props.checked_items || [];
-
-        const polygon = (
-            <SortableComponent
-                items={checked_items}
-                classes={classes}
-                removeItem={this.props.removeItem}
-                checkItem={this.props.checkItem}
-                update_items={this.props.updateItemsAction}
-            />
-        );
+        let done_items = this.props.done_items || [];
 
         return (
             <div>
                 <SortableComponent
                     items={items}
                     classes={classes}
-                    removeItem={this.props.removeItem}
-                    checkItem={this.props.checkItem}
-                    update_items={this.props.updateItemsAction}
+                    table='items'
                 />
-                <Switch checked={checked} onChange={this.handleChange} aria-label="Collapse" />
-                <div className={classes.container}>
-                    <Grow in={checked}>{polygon}</Grow>
-                </div>
-
+                <Switch checked={fade_checked} onChange={this.handleChange} aria-label="Collapse" />
+                <Collapse in={fade_checked}>
+                    <SortableComponent
+                        items={done_items}
+                        classes={classes}
+                        table='done_items'
+                    />
+                </Collapse>
             </div>
         );
     }
@@ -189,23 +174,15 @@ class ListItems extends React.Component {
 
 ListItems.propTypes = {
     classes: PropTypes.object.isRequired,
-    removeItem: PropTypes.func.isRequired,
-    checkItem: PropTypes.func.isRequired,
 };
 
 // приклеиваем данные из store
 const mapStateToProps = store => {
     return {
-        items: store.app.items.sort((a, b) => parseInt(a.order) - parseInt(b.order)).filter(x => !x.checked),
-        checked_items: store.app.items.sort((a, b) => parseInt(a.order) - parseInt(b.order)).filter(x => x.checked),
-    }
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        updateItemsAction: items => dispatch(updateItems(items)),
+        items: store.app.items.sort((a, b) => parseInt(a.order) - parseInt(b.order)),
+        done_items: store.app.done_items.sort((a, b) => parseInt(a.order) - parseInt(b.order)),
     }
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ListItems));
+export default connect(mapStateToProps)(withStyles(styles)(ListItems));

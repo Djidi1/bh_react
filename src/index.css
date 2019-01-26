@@ -25,3 +25,11 @@ body {
   background: -webkit-linear-gradient(to bottom, #3F51B5, #E8EAF6);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to bottom, #3F51B5, #E8EAF6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
+
+/* class for drag'n'drop style */
+.rc-swipeout.drag-item {
+  box-shadow: 1px 1px 8px 2px #9E9E9E;
+  zoom: 102%;
+  margin: 0 5px 0;
+  border: 1px solid #ffffff;
+}

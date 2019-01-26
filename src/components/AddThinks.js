@@ -1,4 +1,7 @@
 import React from 'react';
+
+import updateIDB from './updateIndexDB';
+
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -58,9 +61,10 @@ class AddThinks extends React.Component {
     handleClickAddItem = () => {
         let new_item = {};
         new_item.title = this.state.new_item;
+        new_item.checked = false;
         // reset value
         this.setState({ new_item: '' });
-        this.props.setItem(new_item);
+        updateIDB({type: 'SET_ITEM', payload: new_item}, 'items').then();
     };
     handleKeyPress = (event) => {
         if(event.key === 'Enter'){
@@ -117,7 +121,6 @@ class AddThinks extends React.Component {
 
 AddThinks.propTypes = {
     classes: PropTypes.object.isRequired,
-    setItem: PropTypes.func.isRequired,
 };
 
 
