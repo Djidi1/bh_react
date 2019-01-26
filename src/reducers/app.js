@@ -1,5 +1,6 @@
 export const initialState = {
     app_name: 'BulkaHleba',
+    app_bg: true,
     items: [],
     done_items: []
 };
@@ -20,10 +21,8 @@ export function appReducer(state = initialState, action) {
             new_items.splice(action.payload, 1);
             return {...state, items: new_items};
         }
-        case 'CHECK_ITEM': {
-            let new_items = [...state.items];
-            new_items.find(x => x === action.payload).checked = !(new_items.find(x => x === action.payload).checked);
-            return {...state, items: new_items};
+        case 'HIDE_BG': {
+            return {...state, app_bg: action.payload};
         }
         case 'DELETE_DB': {
             return state;

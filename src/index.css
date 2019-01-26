@@ -26,10 +26,38 @@ body {
   background: linear-gradient(to bottom, #3F51B5, #E8EAF6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
+.photo-background {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
+  height: 100vh;
+  background-image: url("./img/background.jpg");
+}
+
 /* class for drag'n'drop style */
-.rc-swipeout.drag-item {
-  box-shadow: 1px 1px 8px 2px #9E9E9E;
-  zoom: 102%;
-  margin: 0 5px 0;
+.drag-item > div {
+  box-shadow: 1px 1px 10px 2px #9E9E9E;
+}
+.drag-item > div > div.js-content {
+  box-shadow: 1px 1px 20px 0 #9E9E9E;
+  margin: 0 3px 0 !important;
   border: 1px solid #ffffff;
+  /*border-radius: 7px !important;*/
+}
+.swipe-to-delete .js-content, .swipe-to-delete .js-delete {
+  border-radius: 7px;
+  margin: 1px 5px;
+}
+.js-content > li {
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+div.logo {
+  background-image: url("./img/logo.svg");
+  background-size: cover;
+  width: 65%;
+  height: 50px;
+  background-position-y: 65%;
 }

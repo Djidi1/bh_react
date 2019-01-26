@@ -7,15 +7,17 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import DragIndicator from '@material-ui/icons/DragIndicator';
-import DeleteForever from '@material-ui/icons/DeleteForever';
 
-import Swipeout from 'rc-swipeout';
-import 'rc-swipeout/assets/index.css';
+import SwipeToDelete from '../swipe_js/js/main';
+import '../swipe_js/css/main.scss';
+
+
 import {SortableContainer, SortableElement, arrayMove, SortableHandle} from 'react-sortable-hoc';
 
 import Switch from '@material-ui/core/Switch';
-import Collapse from "@material-ui/core/Collapse/Collapse";
 import updateIDB from "./updateIndexDB";
+import Slide from "@material-ui/core/Slide/Slide";
+import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 
 
 const styles = () => ({
@@ -34,6 +36,23 @@ const styles = () => ({
         margin: '2px 8px',
         borderRadius: '4px'
     },
+    toggleLabel: {
+        color: '#ffffff'
+    },
+
+    toggleRoot: {
+        display: 'flex',
+        justifyContent: 'center',
+        margin: '8px 50px',
+        backgroundColor: '#3F51B5',
+        opacity: 0.8,
+        borderRadius: 5,
+        height: 36
+    },
+    doneItems: {
+        textDecoration: 'line-through',
+        opacity: 0.5,
+    }
 });
 
 const DragHandle = SortableHandle(() => <span><DragIndicator color={"action"}/></span>);
@@ -69,6 +88,7 @@ class SortableComponent extends Component {
         return <SortableList
             classes={this.props.classes}
             items={this.props.items}
+            onSortStart={(_, event) => event.preventDefault()} // it does the trick
             onSortEnd={this.onSortEnd}
             lockAxis={'y'}
             helperClass={'drag-item'}
@@ -81,7 +101,6 @@ class SortableComponent extends Component {
 class ListItemComponent extends Component {
 
     handleToggle = item => () => {
-        console.log(item);
         item.checked = !item.checked;
         let from = 'items';
         let to = 'done_items';
@@ -103,20 +122,12 @@ class ListItemComponent extends Component {
 
     render() {
         const { classes, index, value } = this.props;
-        return <Swipeout
+        return <div>
+            <SwipeToDelete
             key={index}
             className={'rc-swipeout ' + classes.listItem}
-            right={[
-                {
-                    component: <DeleteForever/>,
-                    onPress: this.handleClickRemoveItem(value),
-                    style: { backgroundColor: 'red', color: 'white' },
-                    className: 'custom-class-2'
-                }
-            ]}
-            autoClose={true}
-            // onOpen={() => console.log('open')}
-            // onClose={() => console.log('close')}
+            onDelete={this.handleClickRemoveItem(value)}
+
         >
             <ListItem
                 role={undefined}
@@ -124,15 +135,19 @@ class ListItemComponent extends Component {
                 >
                 <Checkbox
                     className={classes.checkbox}
+                    classes={{ root: value.checked ? classes.doneItems : '' }}
                     checked={value.checked}
                     tabIndex={-1}
                     disableRipple
                     onClick={this.handleToggle(value)}
                 />
-                <ListItemText primary={value.title} />
+                <ListItemText primary={value.title}
+                              classes={{ root: value.checked ? classes.doneItems : '' }}
+                />
                 <DragHandle />
             </ListItem>
-        </Swipeout>;
+        </SwipeToDelete>
+        </div>;
     }
 }
 
@@ -159,14 +174,24 @@ class ListItems extends React.Component {
                     classes={classes}
                     table='items'
                 />
-                <Switch checked={fade_checked} onChange={this.handleChange} aria-label="Collapse" />
-                <Collapse in={fade_checked}>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={fade_checked}
+                            onChange={this.handleChange}
+                            color="secondary"
+                        />
+                    }
+                    label="Показать завершенные"
+                    classes = {{ label: classes.toggleLabel, root: classes.toggleRoot }}
+                />
+                <Slide direction="up" mountOnEnter unmountOnExit in={fade_checked}>
                     <SortableComponent
                         items={done_items}
                         classes={classes}
                         table='done_items'
                     />
-                </Collapse>
+                </Slide>
             </div>
         );
     }

@@ -6,9 +6,16 @@ import { openDb } from "idb";
 import ButtonAppBar from './components/main';
 import { Home, Login, About, Registration, Requests, WishLists} from './pages';
 import updateItems from "./actions/updateItems";
+import {createMuiTheme} from "@material-ui/core";
+import {indigo, orange} from "@material-ui/core/colors";
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 
-
-
+const theme = createMuiTheme({
+    palette: {
+        primary: indigo,
+        secondary: orange,
+    },
+});
 
 async function getAllData(props, table) {
     openDb('bh_db', 1, upgradeDB => {
@@ -36,15 +43,17 @@ class App extends Component {
     render() {
         return (
             <Router>
-                <div className="App">
-                    <ButtonAppBar/>
-                    <Route exact path='/' component={Home}/>
-                    <Route path='/wishlists' component={WishLists}/>
-                    <Route path='/requests' component={Requests}/>
-                    <Route path='/registration' component={Registration}/>
-                    <Route path='/login' component={Login}/>
-                    <Route path='/about' component={About}/>
-                </div>
+                <MuiThemeProvider theme={theme}>
+                    <div className={'App' + (this.props.app_bg ? ' photo-background' : '')}>
+                        <ButtonAppBar/>
+                        <Route exact path='/' component={Home}/>
+                        <Route path='/wishlists' component={WishLists}/>
+                        <Route path='/requests' component={Requests}/>
+                        <Route path='/registration' component={Registration}/>
+                        <Route path='/login' component={Login}/>
+                        <Route path='/about' component={About}/>
+                    </div>
+                </MuiThemeProvider>
             </Router>
         )
     }
@@ -53,7 +62,7 @@ class App extends Component {
 // приклеиваем данные из store
 const mapStateToProps = store => {
     return {
-        items: store.app.items,
+        app_bg: store.app.app_bg,
     }
 };
 

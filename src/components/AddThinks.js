@@ -9,9 +9,15 @@ import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import SendIcon from '@material-ui/icons/Send';
+import AppBar from "@material-ui/core/AppBar/AppBar";
 
 
 const styles = theme => ({
+    subAppBar: {
+        backgroundColor: '#5C6BC0',
+        marginBottom: 5,
+        opacity: 0.9
+    },
     root: {
         display: 'flex',
         flexWrap: 'wrap',
@@ -20,7 +26,7 @@ const styles = theme => ({
         margin: theme.spacing.unit,
     },
     textField: {
-        margin: '16px 8px',
+        margin: '8px',
         width: 'calc(100% - 30px)',
     },
     cssOutlinedInput: {
@@ -67,7 +73,7 @@ class AddThinks extends React.Component {
         updateIDB({type: 'SET_ITEM', payload: new_item}, 'items').then();
     };
     handleKeyPress = (event) => {
-        if(event.key === 'Enter'){
+        if(event.key === 'Enter' && this.state.new_item !== ''){
             this.handleClickAddItem();
         }
     };
@@ -76,9 +82,12 @@ class AddThinks extends React.Component {
         const { classes } = this.props;
 
         return (
+            <AppBar position="sticky" classes={{root: classes.subAppBar}}>
                 <TextField
                     id="outlined-adornment-item"
                     className={classNames(classes.margin, classes.textField)}
+                    margin="dense"
+                    autoComplete={'off'}
                     InputLabelProps={{
                         classes: {
                             root: classes.cssLabel,
@@ -86,7 +95,7 @@ class AddThinks extends React.Component {
                         },
                     }}
                     variant="outlined"
-                    label="New item"
+                    label="Добавить что-то..."
                     value={this.state.new_item}
                     onChange={this.handleChange('new_item')}
                     onKeyPress={this.handleKeyPress}
@@ -115,6 +124,7 @@ class AddThinks extends React.Component {
                         ),
                     }}
                 />
+            </AppBar>
         );
     }
 }

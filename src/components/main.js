@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 
-import { NavLink } from "react-router-dom";
+// import { NavLink } from "react-router-dom";
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -16,13 +16,16 @@ import MenuIcon from '@material-ui/icons/Menu';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-import { Store, Info, AccountBox, Home } from '@material-ui/icons';
+import { Store, Info, AccountBox } from '@material-ui/icons';
 
 import ListItemLink from '../components/ListItemLink';
 import deleteIndexedDB from "../actions/deleteIndexedDB";
 import ListItem from "@material-ui/core/ListItem/ListItem";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
+import Switch from "@material-ui/core/Switch/Switch";
+import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
+import hideBG from "../actions/hideBG";
 
 
 const styles = {
@@ -52,6 +55,13 @@ const styles = {
         margin: '0 0 10px 0',
         color: '#999999'
     },
+    toggleItem: {
+        margin: 0
+    },
+    toggleLabel: {
+        margin: '0 9px',
+        fontSize: 16
+    },
 };
 
 
@@ -67,6 +77,10 @@ class ButtonAppBar extends React.Component {
         });
     };
 
+    handleChange = (item) => {
+        this.props.hideBGAction(!item)
+    };
+
     render() {
 
         const {classes} = this.props;
@@ -74,10 +88,20 @@ class ButtonAppBar extends React.Component {
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    <ListItemLink title='Список покупок' to='/wishlists/' icon={<Store/>}/>
+                    <ListItemLink title='Главная' to='/' icon={<Store/>}/>
                     <ListItemLink title='Вход' to='/login/' icon={<AccountBox/>}/>
                     <Divider />
-                    <ListItemLink title='О программе' to='/about/' icon={<Info/>}/>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={this.props.app_bg}
+                                onChange= {() => this.handleChange(this.props.app_bg)}
+                                color="primary"
+                            />
+                        }
+                        label="Красивый фон"
+                        classes = {{ root: classes.toggleItem, label: classes.toggleLabel }}
+                    />
                     <Divider />
                     <ListItem button onClick={() => this.props.deleteIndexedDBAction()}>
                         <ListItemIcon>
@@ -85,6 +109,8 @@ class ButtonAppBar extends React.Component {
                         </ListItemIcon>
                         <ListItemText primary="Очистить БД"/>
                     </ListItem>
+                    <Divider />
+                    <ListItemLink title='О программе' to='/about/' icon={<Info/>}/>
                 </List>
 
             </div>
@@ -93,7 +119,7 @@ class ButtonAppBar extends React.Component {
 
         return (
             <div className={classes.root}>
-                <AppBar position="static">
+                <AppBar position="sticky">
                     <Toolbar>
                         <IconButton
                             className={classes.menuButton}
@@ -103,10 +129,8 @@ class ButtonAppBar extends React.Component {
                         >
                             <MenuIcon/>
                         </IconButton>
-                        <Typography variant="h6" color="inherit" className={classes.grow}>
-                            {this.props.app_name}
-                        </Typography>
-                        <IconButton color="inherit" component={NavLink} to="/"><Home/></IconButton>
+                        <div className="logo" title={this.props.app_name}/>
+                        {/*<IconButton color="inherit" component={NavLink} to="/"><Home/></IconButton>*/}
                     </Toolbar>
                 </AppBar>
                 <SwipeableDrawer
@@ -147,12 +171,14 @@ const mapStateToProps = store => {
     return {
         user: store.user,
         app_name: store.app.app_name,
+        app_bg: store.app.app_bg
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         deleteIndexedDBAction: () => dispatch(deleteIndexedDB()),
+        hideBGAction: (item) => dispatch(hideBG(item)),
     }
 };
 
