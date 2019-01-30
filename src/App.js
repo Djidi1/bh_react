@@ -9,6 +9,7 @@ import updateItems from "./actions/updateItems";
 import {createMuiTheme} from "@material-ui/core";
 import {indigo, orange} from "@material-ui/core/colors";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
+import updateIDB from "./components/updateIndexDB";
 
 const theme = createMuiTheme({
     typography: {
@@ -20,16 +21,29 @@ const theme = createMuiTheme({
     },
 });
 
-async function getAllData(props, table) {
+async function getAllData(props, list) {
     openDb('bh_db', 1, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
-            upgradeDB.createObjectStore(table, {keyPath: "key", autoIncrement: true});
+            upgradeDB.createObjectStore(list);
         }
     }).then(async db => {
-        let tx = db.transaction(table, 'readonly');
-        let store = tx.objectStore(table);
+        let tx = db.transaction(list, 'readonly');
+        let store = tx.objectStore(list);
         let allSavedItems = await store.getAll();
-        props.writeItemsAction(allSavedItems, table);
+        let allSavedKeys = await store.getAllKeys();
+        // create store table if not exist
+        if (allSavedKeys.indexOf('items') === -1) {
+            updateIDB({type: 'SET_ITEM', payload: ''}, 'items').then();
+        }
+        if (allSavedKeys.indexOf('done_items') === -1) {
+            updateIDB({type: 'SET_ITEM', payload: ''}, 'done_items').then();
+        }
+        // save to store from idb
+        let result_store = {};
+        allSavedKeys.forEach(function (table, index) {
+            result_store[table] = allSavedItems[index];
+        });
+        props.writeItemsAction(result_store, list);
         db.close();
         return allSavedItems;
     });
@@ -38,9 +52,12 @@ async function getAllData(props, table) {
 class App extends Component {
     componentDidMount() {
         (async () => {
-            const items = await getAllData(this.props, 'items');
-            const done_items = await getAllData(this.props, 'done_items');
-            this.setState({items: items, done_items: done_items});
+            const list = await getAllData(this.props, 'list');
+            if (list !== undefined) {
+                const items = list.items || [];
+                const done_items = list.done_items || [];
+                this.setState({items: items, done_items: done_items});
+            }
         })()
     }
     render() {
@@ -64,6 +81,7 @@ class App extends Component {
 
 // приклеиваем данные из store
 const mapStateToProps = store => {
+    console.log(store);
     return {
         app_bg: store.app.app_bg,
     }
@@ -71,7 +89,7 @@ const mapStateToProps = store => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        writeItemsAction: (items, table) => dispatch(updateItems(items, table)),
+        writeItemsAction: (items, list_table) => dispatch(updateItems(items, list_table)),
     }
 };
 

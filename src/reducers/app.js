@@ -1,20 +1,21 @@
 export const initialState = {
     app_name: 'BulkaHleba',
     app_bg: true,
-    items: [],
-    done_items: []
+    list: {
+        items: [],
+        done_items: []
+    }
 };
 
 export function appReducer(state = initialState, action) {
     switch (action.type) {
         case 'UPDATE_ITEMS': {
             let items = action.payload;
-            return {...state, [action.table]: items};
-        }
-        case 'SET_ITEM': {
-            let new_items = [...state.items];
-            new_items.unshift(action.payload);
-            return {...state, items: new_items};
+            if (action.table !== undefined) {
+                // Update only one table in store list
+                items = {...state[action.list_table], [action.table]: items};
+            }
+            return {...state, [action.list_table]: items};
         }
         case 'REMOVE_ITEM': {
             let new_items = [...state.items];

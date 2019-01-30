@@ -57,8 +57,13 @@ const styles = () => ({
 
 const DragHandle = SortableHandle(() => <span><DragIndicator color={"action"}/></span>);
 
-const SortableItem = SortableElement(({value, index, classes, removeItem, checkItem}) =>
-        <ListItemComponent index={index} value={value} classes={classes} removeItem={removeItem} checkItem={checkItem}/>
+const SortableItem = SortableElement(({value, index, classes, removeItem, checkItem}) => (
+        <ListItemComponent index={index}
+                           value={value}
+                           classes={classes}
+                           removeItem={removeItem}
+                           checkItem={checkItem}/>
+    )
 );
 
 const SortableList = SortableContainer(({items,classes,removeItem,checkItem}) => {
@@ -68,9 +73,14 @@ const SortableList = SortableContainer(({items,classes,removeItem,checkItem}) =>
             disablePadding
             className={classes.root}
         >
-
             {items.map((item, index) => (
-                <SortableItem key={`item-${index}`} classes={classes} removeItem={removeItem} checkItem={checkItem} index={index} value={item} />
+                <SortableItem
+                    key={`item-${index}`}
+                    classes={classes}
+                    removeItem={removeItem}
+                    checkItem={checkItem}
+                    index={index}
+                    value={item} />
             ))}
         </List>
     );
@@ -100,7 +110,7 @@ class SortableComponent extends Component {
 
 class ListItemComponent extends Component {
 
-    handleToggle = item => () => {
+    handleToggle = (item) => () => {
         item.checked = !item.checked;
         let from = 'items';
         let to = 'done_items';
@@ -121,10 +131,10 @@ class ListItemComponent extends Component {
     };*/
 
     render() {
-        const { classes, index, value } = this.props;
+        const { classes, value } = this.props;
         return <div>
             <SwipeToDelete
-            key={index}
+            key={value.key}
             className={'rc-swipeout ' + classes.listItem}
             onDelete={this.handleClickRemoveItem(value)}
 
@@ -167,6 +177,14 @@ class ListItems extends React.Component {
         let items = this.props.items || [];
         let done_items = this.props.done_items || [];
 
+        items.forEach(function (item, key) {
+            item['key'] = key;
+        });
+
+        done_items.forEach(function (item, key) {
+            item['key'] = key;
+        });
+
         return (
             <div>
                 <SortableComponent
@@ -204,8 +222,8 @@ ListItems.propTypes = {
 // приклеиваем данные из store
 const mapStateToProps = store => {
     return {
-        items: store.app.items.sort((a, b) => parseInt(a.order) - parseInt(b.order)),
-        done_items: store.app.done_items.sort((a, b) => parseInt(a.order) - parseInt(b.order)),
+        items: store.app.list.items ? store.app.list.items.sort((a, b) => parseInt(a.order) - parseInt(b.order)) : [],
+        done_items: store.app.list.done_items ? store.app.list.done_items.sort((a, b) => parseInt(a.order) - parseInt(b.order)) : [],
     }
 };
 

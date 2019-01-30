@@ -1,8 +1,8 @@
 {
   "name": "bh",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "homepage": "../www",
+  "homepage": "/web/www/",
   "dependencies": {
     "@material-ui/core": "^3.6.1",
     "@material-ui/icons": "^3.0.1",
