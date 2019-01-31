@@ -37,10 +37,10 @@ body {
 
 /* class for drag'n'drop style */
 .drag-item > div {
-  box-shadow: 1px 1px 10px 2px #9E9E9E;
+  box-shadow: 0 0 10px 2px #9E9E9E;
 }
 .drag-item > div > div.js-content {
-  box-shadow: 1px 1px 20px 0 #9E9E9E;
+  box-shadow: 0 0 20px 9px #9E9E9E;
   margin: 0 3px 0 !important;
   border: 1px solid #ffffff;
   /*border-radius: 7px !important;*/

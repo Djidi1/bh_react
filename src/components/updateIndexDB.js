@@ -80,9 +80,16 @@ async function updateIDB(action, table) {
             break;
         }
         case 'REMOVE_ITEM': {
-            await idbKeyval.delete(list_table, table, action.payload.key);
-            let new_store = await idbKeyval.getAll(table);
-            store.dispatch(updateItems(new_store, table));
+            // 1. get all data in table
+            let store_items = await idbKeyval.getAll(list_table, table);
+            store_items = store_items[0] !== undefined ? store_items[0] : store_items;
+            // 2. remove item
+            store_items.splice(action.payload.key, 1);
+            // 3. save new state in idb
+            await idbKeyval.deleteTable(list_table, table);
+            await idbKeyval.setTable(list_table, table, store_items);
+            // 4 update app store
+            store.dispatch(updateItems(store_items, list_table,table));
             break;
         }
         case 'CHECK_ITEM': {
@@ -120,14 +127,11 @@ async function updateIDB(action, table) {
             break;
         }
         case 'UPDATE_ITEMS': {
-            let new_items = action.payload;
             // update store
-            store.dispatch(updateItems(new_items, table));
+            store.dispatch(updateItems(action.payload, list_table, action.table));
             // update IDB
-            await idbKeyval.clear(table);
-            new_items.forEach(async function (item) {
-                await idbKeyval.set(table, item);
-            });
+            await idbKeyval.deleteTable(list_table, action.table);
+            await idbKeyval.setTable(list_table, action.table, action.payload);
             break;
         }
         case 'DELETE_DB': {

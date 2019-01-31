@@ -11,7 +11,10 @@ export default class SwipeToDelete extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {isDeleted: false};
+    this.state = {
+        isDeleted: false,
+        moveLimit: 40
+    };
 
     this.model = new Model({deleteSwipe: this.props.deleteSwipe});
     this.device = Device.factory(isMobile.any());
@@ -20,9 +23,10 @@ export default class SwipeToDelete extends React.Component {
   }
 
   render() {
-    if (this.state.isDeleted) {
-      return null;
-    }
+    // element deleting in store and rerender them
+    // if (this.state.isDeleted) {
+    //   return null;
+    // }
 
     return React.createElement(
       this.props.tag,
@@ -83,13 +87,16 @@ export default class SwipeToDelete extends React.Component {
     this.callMoveCB(e);
   }
 
-  moveAt(e) {
-    const target = this.regionContent.firstChild;
-    const res = this.device.getPageX(e) - this.model.startX;
-    if (res < 0) {
-        target.style.left = `${res}px`;
+    moveAt(e) {
+        const target = this.regionContent.firstChild;
+        const res = this.device.getPageX(e) - this.model.startX;
+        if (res < -this.state.moveLimit) {
+            if (this.state.moveLimit > 0) {
+                this.setState({moveLimit: 0});
+            }
+            target.style.left = `${res}px`;
+        }
     }
-  }
 
   callMoveCB(e) {
     const x = this.device.getPageX(e);
@@ -119,6 +126,8 @@ export default class SwipeToDelete extends React.Component {
 
   onStopInteract(e, resolve, reject) {
     const el = this.regionContent.firstChild;
+
+      this.setState({moveLimit: 40});
 
     this.offInteract();
     this.device.getStopEventNames().forEach(eventName => el.removeEventListener(eventName, this._onStopInteract, false));
@@ -156,10 +165,15 @@ export default class SwipeToDelete extends React.Component {
     return this.model.calcSwipePercent({shift, width});
   }
 
-  onDelete() {
-    this.props.onDelete();
-    this.setState({isDeleted: true});
-  }
+    onDelete() {
+        this.props.onDelete();
+
+        const target = this.regionContent.firstChild;
+        target.classList.remove('js-transition-delete-left');
+        this.model.startX = target.style.left = 0;
+
+        this.setState({isDeleted: true});
+    }
 
   onCancel(e) {
     this.props.onCancel();

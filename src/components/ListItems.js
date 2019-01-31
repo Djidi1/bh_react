@@ -92,13 +92,13 @@ class SortableComponent extends Component {
         sorted_array.forEach(function(item, index){
             item.order = index;
         });
-        updateIDB({type: 'UPDATE_ITEMS', payload: sorted_array}, this.props.table).then();
+        updateIDB({type: 'UPDATE_ITEMS', payload: sorted_array, table: this.props.table}, 'list').then();
     };
     render() {
         return <SortableList
             classes={this.props.classes}
             items={this.props.items}
-            onSortStart={(_, event) => event.preventDefault()} // it does the trick
+            onSortStart={(_, event) => (event.preventDefault())} // it does the trick
             onSortEnd={this.onSortEnd}
             lockAxis={'y'}
             helperClass={'drag-item'}
