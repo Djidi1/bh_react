@@ -3,7 +3,7 @@ import {store} from '../store/configureStore'
 import updateItems from "../actions/updateItems";
 
 let db = 'bh_db';
-let list_table = 'list';
+let list_table = 'lists';
 
 // create table on start app
 const dbPromise = openDb(db, 1, upgradeDB => {
@@ -15,27 +15,44 @@ const idbKeyval = {
         const db = await dbPromise;
         return db.transaction(table).objectStore(table).get(key);
     },
-    async set(list_table, table, val) {
+    async set(list_table, list_key, table, val) {
         const db = await dbPromise;
-        let list_items = await idbKeyval.getAll(list_table, table);
-        list_items = (list_items[0] === undefined) ? [] : list_items[0];
-        if (val !== '') {
-            list_items.push(val);
+        let list_items = await idbKeyval.getAllFromList(list_table, list_key);
+        // takes first element of array
+        list_items = list_items[0] !== undefined ? list_items[0] : list_items;
+
+        // create clear store if not exist
+        if (list_items[table] === undefined) {
+            // convert to object
+            list_items = {};
+            list_items[table] = [];
         }
+        // create clear store for 'done_items' if not exist
+        if (list_items['done_items'] === undefined) {
+            list_items['done_items'] = [];
+        }
+
+        Object.keys(list_items).forEach(function(index) {
+            let items = list_items[index];
+            if (table === index && val !== '') {
+                items.push(val);
+            }
+        });
+
         const tx = db.transaction(list_table, 'readwrite');
-        tx.objectStore(list_table).put(list_items, table).then();
+        tx.objectStore(list_table).put(list_items, list_key).then();
         return tx.complete;
     },
-    async setTable(list_table, table, data) {
+    async setList(list_table, list_key, data) {
         const db = await dbPromise;
         const tx = db.transaction(list_table, 'readwrite');
-        tx.objectStore(list_table).put(data, table).then();
+        tx.objectStore(list_table).put(data, list_key).then();
         return tx.complete;
     },
-    async deleteTable(list_table, table) {
+    async deleteList(list_table, list_key) {
         const db = await dbPromise;
         const tx = db.transaction(list_table, 'readwrite');
-        tx.objectStore(list_table).delete(table).then();
+        tx.objectStore(list_table).delete(list_key).then();
         return tx.complete;
     },
     async clear(table) {
@@ -44,94 +61,87 @@ const idbKeyval = {
         tx.objectStore(table).clear().then();
         return tx.complete;
     },
-    async getAll(list_table, table) {
+    async getAllFromList(list_table, list_key) {
         const db = await dbPromise;
-        return db.transaction(list_table).objectStore(list_table).getAll(table);
+        return db.transaction(list_table).objectStore(list_table).getAll(list_key);
     },
-    async getAllKeys(list_table, table) {
+    async getAllKeysFromList(list_table, list_key) {
         const db = await dbPromise;
-        return db.transaction(list_table).objectStore(list_table).getAllKeys(table);
-    },
-    async getAllFromList(list_table) {
-        const db = await dbPromise;
-        return db.transaction(list_table).objectStore(list_table).getAll();
-    },
-    async getAllKeysFromList(list_table) {
-        const db = await dbPromise;
-        return db.transaction(list_table).objectStore(list_table).getAllKeys();
+        return db.transaction(list_table).objectStore(list_table).getAllKeys(list_key);
     },
 };
 
-async function syncStoreIdb(list_table, table) {
-    let allSavedItems = await idbKeyval.getAll(list_table, table);
-    let allSavedKeys = await idbKeyval.getAllKeys(list_table, table);
+async function syncStoreIdb(list_table, list_key) {
+    let allSavedLists = await idbKeyval.getAllFromList(list_table, list_key);
     // save to store from idb
-    allSavedKeys.forEach(function (table, index) {
-        store.dispatch(updateItems(allSavedItems[index], list_table, table));
+    allSavedLists.forEach(function (_, index) {
+        store.dispatch(updateItems(allSavedLists[index], list_key));
     });
 }
 
-async function updateIDB(action, table) {
-    const list_table = 'list';
+async function updateIDB(action, table, list_table) {
+    let list_key = store.getState().app.list_key;
+
     switch (action.type) {
         case 'SET_ITEM': {
-            await idbKeyval.set(list_table, table, action.payload);
-            syncStoreIdb(list_table, table).then();
+            await idbKeyval.set(list_table, list_key, table, action.payload);
+            syncStoreIdb(list_table, list_key).then();
             break;
         }
         case 'REMOVE_ITEM': {
             // 1. get all data in table
-            let store_items = await idbKeyval.getAll(list_table, table);
-            store_items = store_items[0] !== undefined ? store_items[0] : store_items;
-            // 2. remove item
-            store_items.splice(action.payload.key, 1);
-            // 3. save new state in idb
-            await idbKeyval.deleteTable(list_table, table);
-            await idbKeyval.setTable(list_table, table, store_items);
-            // 4 update app store
-            store.dispatch(updateItems(store_items, list_table,table));
+            let all_lists = await idbKeyval.getAllFromList(list_table, list_key);
+            all_lists = all_lists[0] !== undefined ? all_lists[0] : all_lists;
+            let result_store = {};
+
+            Object.keys(all_lists).forEach(function (table_key) {
+                // 2. delete from "from" table
+                if (table_key === table) {
+                    all_lists[table_key].splice(action.payload.key,1);
+                }
+                result_store[table_key] = all_lists[table_key];
+            });
+
+            // 4. update stores
+            store.dispatch(updateItems(result_store, list_key));
+            // 5. update IDB
+            await idbKeyval.deleteList(list_table, list_key);
+            await idbKeyval.setList(list_table, list_key, result_store);
             break;
         }
         case 'CHECK_ITEM': {
             // 1. get all data in list
-            let all_list = await idbKeyval.getAllFromList(list_table);
-            let all_keys = await idbKeyval.getAllKeysFromList(list_table);
-
+            let all_lists = await idbKeyval.getAllFromList(list_table, list_key);
             // prepare data for storage
             let result_store = {};
-            all_keys.forEach(async function (key, index) {
+            let all_list = all_lists[0];
+            Object.keys(all_list).forEach(function (table) {
                 // 2. delete from "from" table
-                if (key === action.from) {
-                    all_list[index].splice(action.payload.key,1);
-                } else if (key === action.to) {
+                if (table === action.from) {
+                    all_list[table].splice(action.payload.key,1);
+                } else if (table === action.to) {
                     // 3. add to "to" table
-                    all_list[index].unshift(action.payload);
+                    all_list[table].unshift(action.payload);
                 }
-                result_store[key] = all_list[index];
+                result_store[table] = all_list[table];
             });
             // 4. update stores
-            store.dispatch(updateItems(result_store, list_table));
+            store.dispatch(updateItems(result_store, list_key));
 
-            // 5. update idb
-            all_keys.forEach(async function (key, index) {
-                // 2. delete from "from" table
-                if (key === action.from) {
-                    await idbKeyval.deleteTable(list_table, key);
-                    await idbKeyval.setTable(list_table, key, all_list[index]);
-                } else if (key === action.to) {
-                    // 3. add to "to" table
-                    await idbKeyval.deleteTable(list_table, key);
-                    await idbKeyval.setTable(list_table, key, all_list[index]);
-                }
-            });
+            // 5. update IDB
+            await idbKeyval.deleteList(list_table, list_key);
+            await idbKeyval.setList(list_table, list_key, result_store);
+
             break;
         }
         case 'UPDATE_ITEMS': {
             // update store
-            store.dispatch(updateItems(action.payload, list_table, action.table));
+            store.dispatch(updateItems(action.payload, list_key, table));
+            // get data from app store
+            let new_data = store.getState().lists[list_key];
             // update IDB
-            await idbKeyval.deleteTable(list_table, action.table);
-            await idbKeyval.setTable(list_table, action.table, action.payload);
+            await idbKeyval.deleteList(list_table, list_key);
+            await idbKeyval.setList(list_table, list_key, new_data);
             break;
         }
         case 'DELETE_DB': {

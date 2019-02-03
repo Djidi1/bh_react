@@ -19,7 +19,6 @@ import updateIDB from "./updateIndexDB";
 import Slide from "@material-ui/core/Slide/Slide";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 
-
 const styles = () => ({
     root: {
         width: '100%',
@@ -88,11 +87,12 @@ const SortableList = SortableContainer(({items,classes,removeItem,checkItem}) =>
 
 class SortableComponent extends Component {
     onSortEnd = ({oldIndex, newIndex}) => {
-        let sorted_array = arrayMove(this.props.items, oldIndex, newIndex);
+        const { items, table, list_key } = this.props;
+        let sorted_array = arrayMove(items, oldIndex, newIndex);
         sorted_array.forEach(function(item, index){
             item.order = index;
         });
-        updateIDB({type: 'UPDATE_ITEMS', payload: sorted_array, table: this.props.table}, 'list').then();
+        updateIDB({type: 'UPDATE_ITEMS', payload: sorted_array}, table, 'lists', list_key).then();
     };
     render() {
         return <SortableList
@@ -118,17 +118,13 @@ class ListItemComponent extends Component {
             from = 'done_items';
             to = 'items';
         }
-        updateIDB({type: 'CHECK_ITEM', payload: item, from: from, to: to}).then();
+        updateIDB({type: 'CHECK_ITEM', payload: item, from: from, to: to}, '', 'lists').then();
     };
 
     handleClickRemoveItem = item => () => {
         let table = item.checked ? 'done_items' : 'items';
-        updateIDB({type: 'REMOVE_ITEM', payload: item}, table).then();
+        updateIDB({type: 'REMOVE_ITEM', payload: item}, table, 'lists').then();
     };
-
-   /* handleChangeClass = item => () => {
-        item.moving = true;
-    };*/
 
     render() {
         const { classes, value } = this.props;
@@ -163,7 +159,7 @@ class ListItemComponent extends Component {
 
 class ListItems extends React.Component {
     state = {
-        fade_checked: false,
+        fade_checked: false
     };
 
     handleChange = () => {
@@ -171,24 +167,32 @@ class ListItems extends React.Component {
     };
 
     render() {
-        const { classes } = this.props;
+        const { classes, list_key } = this.props;
         const { fade_checked } = this.state;
 
-        let items = this.props.items || [];
-        let done_items = this.props.done_items || [];
+        let items = [];
+        let done_items = [];
+        let lists = this.props.lists || {};
+        if (Object.keys(lists).length !== 0 && lists.constructor === Object) {
+            items = lists[list_key].items;
+            done_items = lists[list_key].done_items;
 
-        items.forEach(function (item, key) {
-            item['key'] = key;
-        });
+            items = items.sort((a, b) => parseInt(a.order) - parseInt(b.order));
+            items.forEach(function (item, key) {
+                item['key'] = key;
+            });
 
-        done_items.forEach(function (item, key) {
-            item['key'] = key;
-        });
+            done_items = done_items.sort((a, b) => parseInt(a.order) - parseInt(b.order));
+            done_items.forEach(function (item, key) {
+                item['key'] = key;
+            });
+        }
 
         return (
             <div>
                 <SortableComponent
                     items={items}
+                    list_key={list_key}
                     classes={classes}
                     table='items'
                 />
@@ -206,6 +210,7 @@ class ListItems extends React.Component {
                 <Slide direction="up" mountOnEnter unmountOnExit in={fade_checked}>
                     <SortableComponent
                         items={done_items}
+                        list_key={list_key}
                         classes={classes}
                         table='done_items'
                     />
@@ -222,8 +227,8 @@ ListItems.propTypes = {
 // приклеиваем данные из store
 const mapStateToProps = store => {
     return {
-        items: store.app.list.items ? store.app.list.items.sort((a, b) => parseInt(a.order) - parseInt(b.order)) : [],
-        done_items: store.app.list.done_items ? store.app.list.done_items.sort((a, b) => parseInt(a.order) - parseInt(b.order)) : [],
+        lists: store.lists,
+        list_key: store.app.list_key,
     }
 };
 

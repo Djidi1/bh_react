@@ -65,12 +65,14 @@ class AddThinks extends React.Component {
     };
 
     handleClickAddItem = () => {
+        let lists = 'lists';
+        let list_key = 0;
         let new_item = {};
         new_item.title = this.state.new_item;
         new_item.checked = false;
         // reset value
         this.setState({ new_item: '' });
-        updateIDB({type: 'SET_ITEM', payload: new_item}, 'items').then();
+        updateIDB({type: 'SET_ITEM', payload: new_item}, 'items', lists, list_key).then();
     };
     handleKeyPress = (event) => {
         if(event.key === 'Enter' && this.state.new_item !== ''){

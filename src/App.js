@@ -4,7 +4,7 @@ import { HashRouter as Router, Route } from "react-router-dom";
 import { openDb } from "idb";
 
 import ButtonAppBar from './components/main';
-import { Home, Login, About, Registration, Requests, WishLists} from './pages';
+import { Home, Login, About, Registration, Requests, Lists} from './pages';
 import updateItems from "./actions/updateItems";
 import {createMuiTheme} from "@material-ui/core";
 import {indigo, orange} from "@material-ui/core/colors";
@@ -21,41 +21,45 @@ const theme = createMuiTheme({
     },
 });
 
-async function getAllData(props, list) {
+async function getAllData(props, lists) {
     openDb('bh_db', 1, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
-            upgradeDB.createObjectStore(list);
+            upgradeDB.createObjectStore(lists);
         }
     }).then(async db => {
-        let tx = db.transaction(list, 'readonly');
-        let store = tx.objectStore(list);
-        let allSavedItems = await store.getAll();
-        let allSavedKeys = await store.getAllKeys();
-        // create store table if not exist
-        if (allSavedKeys.indexOf('items') === -1) {
-            updateIDB({type: 'SET_ITEM', payload: ''}, 'items').then();
-        }
-        if (allSavedKeys.indexOf('done_items') === -1) {
-            updateIDB({type: 'SET_ITEM', payload: ''}, 'done_items').then();
-        }
-        // save to store from idb
-        let result_store = {};
-        allSavedKeys.forEach(function (table, index) {
-            result_store[table] = allSavedItems[index];
+        let tx = db.transaction(lists, 'readonly');
+        let store = tx.objectStore(lists);
+        let allSavedLists = await store.getAll();
+        allSavedLists.forEach(function (saved_list_items, list_key) {
+            // create store table if not exist
+            if (!saved_list_items.hasOwnProperty("items")) {
+                updateIDB({type: 'SET_ITEM', payload: ''}, 'items', lists, list_key).then(function () {
+                    if (saved_list_items.indexOf('done_items') === -1) {
+                        updateIDB({type: 'SET_ITEM', payload: ''}, 'done_items', lists, list_key).then();
+                    }
+                });
+            }
+            // init and save to store from idb
+            let result_store = {
+                title: 'test list',
+                items: saved_list_items['items'] || [],
+                done_items: saved_list_items['done_items'] || []
+            };
+            props.writeItemsAction(result_store, list_key);
         });
-        props.writeItemsAction(result_store, list);
         db.close();
-        return allSavedItems;
+        return allSavedLists;
     });
 }
 
 class App extends Component {
     componentDidMount() {
         (async () => {
-            const list = await getAllData(this.props, 'list');
-            if (list !== undefined) {
-                const items = list.items || [];
-                const done_items = list.done_items || [];
+            let lists = await getAllData(this.props, 'lists');
+            if (lists !== undefined) {
+                lists = lists[0] !== undefined ? lists[0] : lists;
+                const items = lists.items || [];
+                const done_items = lists.done_items || [];
                 this.setState({items: items, done_items: done_items});
             }
         })()
@@ -67,7 +71,7 @@ class App extends Component {
                     <div className={'App' + (this.props.app_bg ? ' photo-background' : '')}>
                         <ButtonAppBar/>
                         <Route exact path='/' component={Home}/>
-                        <Route path='/wishlists' component={WishLists}/>
+                        <Route path='/lists' component={Lists}/>
                         <Route path='/requests' component={Requests}/>
                         <Route path='/registration' component={Registration}/>
                         <Route path='/login' component={Login}/>
@@ -89,7 +93,7 @@ const mapStateToProps = store => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        writeItemsAction: (items, list_table) => dispatch(updateItems(items, list_table)),
+        writeItemsAction: (items, list_key) => dispatch(updateItems(items, list_key)),
     }
 };
 

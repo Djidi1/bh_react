@@ -1,8 +1,8 @@
-export default function updateItems(items, list_table, table) {
+export default function updateItems(items, list_key, table) {
     return {
         type: 'UPDATE_ITEMS',
         payload: items,
-        list_table: list_table,
+        list_key: list_key,
         table: table
     }
 }

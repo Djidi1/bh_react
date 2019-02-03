@@ -16,7 +16,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-import { Store, Info, AccountBox } from '@material-ui/icons';
+import { Store, Info, AccountBox, ListAlt } from '@material-ui/icons';
 
 import ListItemLink from '../components/ListItemLink';
 import deleteIndexedDB from "../actions/deleteIndexedDB";
@@ -89,6 +89,7 @@ class ButtonAppBar extends React.Component {
             <div className={classes.list}>
                 <List>
                     <ListItemLink title='Главная' to='/' icon={<Store/>}/>
+                    <ListItemLink title='Списки' to='/lists/' icon={<ListAlt/>}/>
                     <ListItemLink title='Вход' to='/login/' icon={<AccountBox/>}/>
                     <Divider />
                     <FormControlLabel
