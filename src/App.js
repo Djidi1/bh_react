@@ -2,14 +2,17 @@ import React, { Component } from 'react';
 import {connect} from "react-redux";
 import { HashRouter as Router, Route } from "react-router-dom";
 import { openDb } from "idb";
+import updateIDB from "./components/updateIndexDB";
 
 import ButtonAppBar from './components/main';
 import { Home, Login, About, Registration, Requests, Lists} from './pages';
 import updateItems from "./actions/updateItems";
+
 import {createMuiTheme} from "@material-ui/core";
 import {indigo, orange} from "@material-ui/core/colors";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
-import updateIDB from "./components/updateIndexDB";
+
+import 'typeface-roboto';
 
 const theme = createMuiTheme({
     typography: {
@@ -41,7 +44,7 @@ async function getAllData(props, lists) {
             }
             // init and save to store from idb
             let result_store = {
-                title: 'test list',
+                title: saved_list_items['title'] || 'test list',
                 items: saved_list_items['items'] || [],
                 done_items: saved_list_items['done_items'] || []
             };

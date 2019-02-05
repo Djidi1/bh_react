@@ -69,6 +69,10 @@ const idbKeyval = {
         const db = await dbPromise;
         return db.transaction(list_table).objectStore(list_table).getAllKeys(list_key);
     },
+    async getAllKeys(list_table) {
+        const db = await dbPromise;
+        return db.transaction(list_table).objectStore(list_table).getAllKeys();
+    },
 };
 
 async function syncStoreIdb(list_table, list_key) {
@@ -83,6 +87,26 @@ async function updateIDB(action, table, list_table) {
     let list_key = store.getState().app.list_key;
 
     switch (action.type) {
+        case 'SET_LIST_TITLE': {
+            let list_key = Number(action.list_key);
+            // update store
+            store.dispatch(updateItems(action.payload, list_key));
+            // get data from app store
+            let new_data = store.getState().lists[list_key];
+            // update IDB
+            await idbKeyval.deleteList(list_table, list_key);
+            await idbKeyval.setList(list_table, list_key, new_data);
+            break;
+        }
+        case 'SET_LIST': {
+            let list_table = 'lists';
+            let list_keys = await idbKeyval.getAllKeys(list_table);
+            let list_key = Math.max(...list_keys) + 1;
+            console.log(list_key, action);
+            await idbKeyval.setList(list_table, list_key, action.payload);
+            syncStoreIdb(list_table, list_key).then();
+            break;
+        }
         case 'SET_ITEM': {
             await idbKeyval.set(list_table, list_key, table, action.payload);
             syncStoreIdb(list_table, list_key).then();

@@ -10,23 +10,13 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import SendIcon from '@material-ui/icons/Send';
 import AppBar from "@material-ui/core/AppBar/AppBar";
-import connect from "react-redux/es/connect/connect";
-import Typography from "@material-ui/core/Typography/Typography";
 
 
 const styles = theme => ({
-    typography: {
-        useNextVariants: true,
-    },
     subAppBar: {
         backgroundColor: '#5C6BC0',
         marginBottom: 5,
         opacity: 0.9
-    },
-    title: {
-        color: '#FFFFFF',
-        padding: '8px 8px 0',
-        textAlign: 'center'
     },
     root: {
         display: 'flex',
@@ -65,42 +55,37 @@ const styles = theme => ({
     }
 });
 
-class AddThinks extends React.Component {
+class AddList extends React.Component {
     state = {
-        new_item: ''
+        new_list: ''
     };
 
     handleChange = prop => event => {
         this.setState({ [prop]: event.target.value });
     };
 
-    handleClickAddItem = () => {
-        let lists = 'lists';
-        let list_key = 0;
-        let new_item = {};
-        new_item.title = this.state.new_item;
-        new_item.checked = false;
+    handleClickAddList = () => {
+        let new_list = {};
+        new_list.title = this.state.new_list;
+        new_list.items = [];
+        new_list.done_items = [];
         // reset value
         this.setState({ new_item: '' });
-        updateIDB({type: 'SET_ITEM', payload: new_item}, 'items', lists, list_key).then();
+        updateIDB({type: 'SET_LIST', payload: new_list}).then();
     };
     handleKeyPress = (event) => {
         if(event.key === 'Enter' && this.state.new_item !== ''){
-            this.handleClickAddItem();
+            this.handleClickAddList();
         }
     };
 
     render() {
-        const { classes, lists, list_key } = this.props;
-        const list_title = lists[list_key].title;
+        const { classes } = this.props;
 
         return (
             <AppBar position="sticky" classes={{root: classes.subAppBar}}>
-                <Typography variant="h5" className={classes.title}>
-                    {list_title}
-                </Typography>
                 <TextField
-                    id="outlined-adornment-item"
+                    id="outlined-adornment-list"
                     className={classNames(classes.margin, classes.textField)}
                     margin="dense"
                     autoComplete={'off'}
@@ -111,9 +96,9 @@ class AddThinks extends React.Component {
                         },
                     }}
                     variant="outlined"
-                    label="Добавить что-то..."
+                    label="Добавить список..."
                     value={this.state.new_item}
-                    onChange={this.handleChange('new_item')}
+                    onChange={this.handleChange('new_list')}
                     onKeyPress={this.handleKeyPress}
                     fullWidth
                     InputProps={{
@@ -125,8 +110,7 @@ class AddThinks extends React.Component {
                         endAdornment: (
                             <InputAdornment position="end">
                                 <IconButton
-                                    aria-label="Toggle password visibility"
-                                    onClick={this.handleClickAddItem}
+                                    onClick={this.handleClickAddList}
                                     classes={{
                                         root: classes.cssIcon,
                                         disabled: classes.cssDisabled
@@ -145,17 +129,10 @@ class AddThinks extends React.Component {
     }
 }
 
-AddThinks.propTypes = {
+AddList.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-// приклеиваем данные из store
-const mapStateToProps = store => {
-    return {
-        lists: store.lists,
-        list_key: store.app.list_key,
-    }
-};
 
 
-export default connect(mapStateToProps)(withStyles(styles)(AddThinks));
+export default withStyles(styles)(AddList);
