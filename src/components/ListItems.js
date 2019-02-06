@@ -51,6 +51,11 @@ const styles = () => ({
     doneItems: {
         textDecoration: 'line-through',
         opacity: 0.5,
+    },
+
+    item: {
+        fontWeight: '300',
+        fontSize: '1rem !important'
     }
 });
 
@@ -148,7 +153,10 @@ class ListItemComponent extends Component {
                     onClick={this.handleToggle(value)}
                 />
                 <ListItemText primary={value.title}
-                              classes={{ root: value.checked ? classes.doneItems : '' }}
+                              classes={{
+                                  root: value.checked ? classes.doneItems : '',
+                                  primary: classes.item,
+                              }}
                 />
                 <DragHandle />
             </ListItem>

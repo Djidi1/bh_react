@@ -36,6 +36,10 @@ const styles = () => ({
         padding: 0,
         width: 'calc(100vw - 8px)',
     },
+    item: {
+        fontWeight: '300',
+        fontSize: '1rem !important'
+    }
 });
 
 
@@ -126,7 +130,12 @@ class ListsPage extends React.Component {
                                 value={index}
                                 name="list_keys"
                             />
-                            <ListItemText primary={lists[index].title} />
+                            <ListItemText
+                                classes={{
+                                    primary: classes.item,
+                                }}
+                                primary={lists[index].title}
+                            />
                             <ListItemSecondaryAction>
                                 <IconButton color="primary" onClick={this.handleClickOpen(lists[index], index)}>
                                     <EditIcon />

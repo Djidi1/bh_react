@@ -115,7 +115,7 @@ class AddList extends React.Component {
                                         root: classes.cssIcon,
                                         disabled: classes.cssDisabled
                                     }}
-                                    disabled={this.state.new_item === ''}
+                                    disabled={this.state.new_list === ''}
                                 >
                                     {<SendIcon
                                     color={"inherit"}/>}

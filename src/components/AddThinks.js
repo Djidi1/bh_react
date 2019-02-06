@@ -10,8 +10,6 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import SendIcon from '@material-ui/icons/Send';
 import AppBar from "@material-ui/core/AppBar/AppBar";
-import connect from "react-redux/es/connect/connect";
-import Typography from "@material-ui/core/Typography/Typography";
 
 
 const styles = theme => ({
@@ -91,14 +89,10 @@ class AddThinks extends React.Component {
     };
 
     render() {
-        const { classes, lists, list_key } = this.props;
-        const list_title = lists[list_key].title;
+        const { classes } = this.props;
 
         return (
             <AppBar position="sticky" classes={{root: classes.subAppBar}}>
-                <Typography variant="h5" className={classes.title}>
-                    {list_title}
-                </Typography>
                 <TextField
                     id="outlined-adornment-item"
                     className={classNames(classes.margin, classes.textField)}
@@ -149,13 +143,5 @@ AddThinks.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-// приклеиваем данные из store
-const mapStateToProps = store => {
-    return {
-        lists: store.lists,
-        list_key: store.app.list_key,
-    }
-};
 
-
-export default connect(mapStateToProps)(withStyles(styles)(AddThinks));
+export default withStyles(styles)(AddThinks);

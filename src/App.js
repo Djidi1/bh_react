@@ -14,6 +14,9 @@ import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 
 import 'typeface-roboto';
 
+import Fade from "@material-ui/core/Fade/Fade";
+import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+
 const theme = createMuiTheme({
     typography: {
         useNextVariants: true,
@@ -22,6 +25,17 @@ const theme = createMuiTheme({
         primary: indigo,
         secondary: orange,
     },
+    loader: {
+        position: 'absolute',
+        width: '100%',
+        height: '100vh',
+        zIndex: '10001',
+        padding: '50%',
+        background: '#fff',
+        paddingLeft: 'calc(50% - 20px)',
+        paddingTop: 'calc(50vh - 20px)',
+        opacity: .8,
+    }
 });
 
 async function getAllData(props, lists) {
@@ -56,21 +70,44 @@ async function getAllData(props, lists) {
 }
 
 class App extends Component {
+    state = {
+        loading: true,
+    };
+
     componentDidMount() {
-        (async () => {
-            let lists = await getAllData(this.props, 'lists');
+        ( () => {
+            let lists = getAllData(this.props, 'lists');
             if (lists !== undefined) {
                 lists = lists[0] !== undefined ? lists[0] : lists;
+                this.setState({loading: false});
+                console.log(lists);
                 const items = lists.items || [];
                 const done_items = lists.done_items || [];
                 this.setState({items: items, done_items: done_items});
             }
         })()
     }
+
+
+
     render() {
+        const { loading } = this.state;
         return (
             <Router>
                 <MuiThemeProvider theme={theme}>
+                    {this.state.loading ?
+                        <div style={theme.loader}>
+                            <Fade
+                                in={loading}
+                                style={{
+                                    transitionDelay: '0ms',
+                                }}
+                                unmountOnExit
+                            >
+                                <CircularProgress/>
+                            </Fade>
+                        </div> : ''
+                    }
                     <div className={'App' + (this.props.app_bg ? ' photo-background' : '')}>
                         <ButtonAppBar/>
                         <Route exact path='/' component={Home}/>

@@ -7,6 +7,7 @@ import App from './App'
 import * as ServiceWorker from './serviceWorker'
 
 import './index.css'
+import './fonts.css'
 
 const startApp = () => {
     ReactDOM.render(
