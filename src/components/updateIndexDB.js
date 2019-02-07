@@ -6,7 +6,7 @@ let db = 'bh_db';
 let list_table = 'lists';
 
 // create table on start app
-const dbPromise = openDb(db, 1, upgradeDB => {
+const dbPromise = openDb(db, 3, upgradeDB => {
     upgradeDB.createObjectStore(list_table);
 });
 

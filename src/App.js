@@ -12,8 +12,6 @@ import {createMuiTheme} from "@material-ui/core";
 import {indigo, orange} from "@material-ui/core/colors";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 
-import 'typeface-roboto';
-
 import Fade from "@material-ui/core/Fade/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 
@@ -39,7 +37,7 @@ const theme = createMuiTheme({
 });
 
 async function getAllData(props, lists) {
-    openDb('bh_db', 1, upgradeDB => {
+    openDb('bh_db', 3, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             upgradeDB.createObjectStore(lists);
         }

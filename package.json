@@ -2,7 +2,7 @@
   "name": "bh",
   "version": "1.0.5",
   "private": true,
-  "homepage": "/web/www/",
+  "homepage": "./",
   "dependencies": {
     "@material-ui/core": "^3.6.1",
     "@material-ui/icons": "^3.0.1",

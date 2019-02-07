@@ -55,17 +55,16 @@ body {
 }
 
 div.logo {
-  background-image: url("./img/logo.svg");
+  background-image: url("./img/todo_icon.svg");
   background-size: cover;
   width: 65%;
   height: 50px;
   background-position-y: 65%;
 }
 div.app-icon {
-  background-image: url("./img/icon.svg");
+  background-image: url("./img/todo_icon.svg");
   background-size: cover;
-  width: 50px;
+  width: 25px;
   height: 50px;
-  transform: scaleX(-1);
   background-position-y: 65%;
 }
