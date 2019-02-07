@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { store } from './store/configureStore'
+import { IntlProvider } from "react-intl";
 import App from './App'
 
 import * as ServiceWorker from './serviceWorker'
@@ -12,7 +13,9 @@ import './fonts.css'
 const startApp = () => {
     ReactDOM.render(
         <Provider store={store}>
-            <App />
+            <IntlProvider>
+                <App />
+            </IntlProvider>
         </Provider>,
         document.getElementById('root')
     );

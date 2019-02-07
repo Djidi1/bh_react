@@ -1,5 +1,5 @@
 export const initialState = {
-    app_name: 'BulkaHleba',
+    app_name: 'Just To-Do',
     app_bg: true,
     list_key: 0
 };

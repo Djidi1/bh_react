@@ -71,7 +71,6 @@ class ButtonAppBar extends React.Component {
 
         //Here ya go
         this.props.history.listen((location) => {
-            console.log(location.pathname);
             this.setState({ pathname: location.pathname });
         });
     }
@@ -96,7 +95,7 @@ class ButtonAppBar extends React.Component {
 
         const {classes, list_key, lists} = this.props;
 
-        const list_title = lists[list_key].title;
+        let list_title = lists[list_key].title;
 
         const sideList = (
             <div className={classes.list}>
@@ -133,6 +132,7 @@ class ButtonAppBar extends React.Component {
         let btnList;
 
         if (this.state.pathname === '/lists/') {
+            list_title = 'To-Do Lists';
             btnList = <div className="app-icon" title={this.props.app_name}/>;
         } else {
             btnList = <IconButton color="inherit" component={NavLink} to="/lists/"><ListIcon/></IconButton>;

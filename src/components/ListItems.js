@@ -38,15 +38,17 @@ const styles = () => ({
     toggleLabel: {
         color: '#ffffff'
     },
-
+    showDone: {
+        padding: '8px 50px',
+    },
     toggleRoot: {
         display: 'flex',
         justifyContent: 'center',
-        margin: '8px 50px',
         backgroundColor: '#3F51B5',
         opacity: 0.8,
         borderRadius: 5,
-        height: 36
+        height: 36,
+        margin: 0,
     },
     doneItems: {
         textDecoration: 'line-through',
@@ -204,17 +206,19 @@ class ListItems extends React.Component {
                     classes={classes}
                     table='items'
                 />
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={fade_checked}
-                            onChange={this.handleChange}
-                            color="secondary"
-                        />
-                    }
-                    label="Показать завершенные"
-                    classes = {{ label: classes.toggleLabel, root: classes.toggleRoot }}
-                />
+                <div className={classes.showDone}>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={fade_checked}
+                                onChange={this.handleChange}
+                                color="secondary"
+                            />
+                        }
+                        label="Показать завершенные"
+                        classes = {{ label: classes.toggleLabel, root: classes.toggleRoot }}
+                    />
+                </div>
                 <Slide direction="up" mountOnEnter unmountOnExit in={fade_checked}>
                     <SortableComponent
                         items={done_items}
