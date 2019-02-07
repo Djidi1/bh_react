@@ -1,0 +1,9 @@
+{
+    "menu": {
+        "main": "Main",
+        "login": "Login",
+        "lists": "Lists",
+        "about": "About",
+        "beaut_bg": "Beautiful background"
+    }
+}

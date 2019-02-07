@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import { store } from './store/configureStore'
 import { IntlProvider } from "react-intl";
 import App from './App'
+import './i18n';
 
 import * as ServiceWorker from './serviceWorker'
 

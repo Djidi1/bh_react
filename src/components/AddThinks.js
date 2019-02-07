@@ -119,7 +119,6 @@ class AddThinks extends React.Component {
                         endAdornment: (
                             <InputAdornment position="end">
                                 <IconButton
-                                    aria-label="Toggle password visibility"
                                     onClick={this.handleClickAddItem}
                                     classes={{
                                         root: classes.cssIcon,

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component, Suspense} from 'react';
 import {connect} from "react-redux";
 import { HashRouter as Router, Route } from "react-router-dom";
 import { openDb } from "idb";
@@ -14,7 +14,6 @@ import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 
 import Fade from "@material-ui/core/Fade/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
-import {FormattedMessage} from "react-intl";
 
 const theme = createMuiTheme({
     typography: {
@@ -92,6 +91,7 @@ class App extends Component {
     render() {
         const { loading } = this.state;
         return (
+            <Suspense fallback={<CircularProgress/>}>
             <Router>
                 <MuiThemeProvider theme={theme}>
                     {this.state.loading ?
@@ -109,10 +109,6 @@ class App extends Component {
                     }
                     <div className={'App' + (this.props.app_bg ? ' photo-background' : '')}>
                         <ButtonAppBar/>
-                        <FormattedMessage
-                            id="Home.dayMessage"
-                            defaultMessage="It's a beautiful day outside."
-                        />
                         <Route exact path='/' component={Home}/>
                         <Route path='/lists' component={Lists}/>
                         <Route path='/requests' component={Requests}/>
@@ -122,12 +118,15 @@ class App extends Component {
                     </div>
                 </MuiThemeProvider>
             </Router>
+            </Suspense>
         )
     }
 }
 
 // приклеиваем данные из store
 const mapStateToProps = store => {
+
+    console.log(React.version);
     console.log(store);
     return {
         app_bg: store.app.app_bg,

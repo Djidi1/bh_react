@@ -2,6 +2,8 @@ import React from 'react';
 import {NavLink, withRouter} from "react-router-dom";
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types';
+import {withTranslation} from "react-i18next";
+
 import {withStyles} from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
@@ -91,18 +93,22 @@ class ButtonAppBar extends React.Component {
         this.props.hideBGAction(!item)
     };
 
-    render() {
+    handleChangeLang = (lang) => {
+        this.props.i18n.changeLanguage(lang);
+    };
 
-        const {classes, list_key, lists} = this.props;
+    render() {
+        const {t, classes, list_key, lists} = this.props;
+
 
         let list_title = lists[list_key].title;
 
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    <ListItemLink title='Главная' to='/' icon={<Store/>}/>
-                    <ListItemLink title='Списки' to='/lists/' icon={<ListIcon/>}/>
-                    <ListItemLink title='Вход' to='/login/' icon={<AccountBox/>}/>
+                    <ListItemLink title={t('menu.main')} to='/' icon={<Store/>}/>
+                    <ListItemLink title={t('menu.lists')} to='/lists/' icon={<ListIcon/>}/>
+                    <ListItemLink title={t('menu.login')} to='/login/' icon={<AccountBox/>}/>
                     <Divider />
                     <FormControlLabel
                         control={
@@ -112,7 +118,7 @@ class ButtonAppBar extends React.Component {
                                 color="primary"
                             />
                         }
-                        label="Красивый фон"
+                        label={t('menu.beaut_bg')}
                         classes = {{ root: classes.toggleItem, label: classes.toggleLabel }}
                     />
                     <Divider />
@@ -123,9 +129,22 @@ class ButtonAppBar extends React.Component {
                         <ListItemText primary="Очистить БД"/>
                     </ListItem>
                     <Divider />
-                    <ListItemLink title='О программе' to='/about/' icon={<Info/>}/>
-                </List>
+                    <ListItemLink title={t('menu.about')} to='/about/' icon={<Info/>}/>
 
+                    <Divider />
+                    <ListItem button onClick={() => this.handleChangeLang('ru')}>
+                        <ListItemIcon>
+                            <DeleteIcon/>
+                        </ListItemIcon>
+                        <ListItemText primary="RU"/>
+                    </ListItem>
+                    <ListItem button onClick={() => this.handleChangeLang('en')}>
+                        <ListItemIcon>
+                            <DeleteIcon/>
+                        </ListItemIcon>
+                        <ListItemText primary="EN"/>
+                    </ListItem>
+                </List>
             </div>
         );
 
@@ -207,4 +226,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(ButtonAppBar)));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withRouter(withStyles(styles)(ButtonAppBar))));
