@@ -13,21 +13,14 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/DeleteForever';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
-import ListItem from "@material-ui/core/ListItem/ListItem";
-import ListItemText from "@material-ui/core/ListItemText/ListItemText";
-import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
-import Switch from "@material-ui/core/Switch/Switch";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
-import { Store, Info, AccountBox } from '@material-ui/icons';
+import { Info, AccountBox } from '@material-ui/icons';
 import ListIcon from '@material-ui/icons/FormatListNumbered'
 import MenuIcon from '@material-ui/icons/Menu';
 
 import ListItemLink from '../components/ListItemLink';
-import deleteIndexedDB from "../actions/deleteIndexedDB";
-import hideBG from "../actions/hideBG";
+import SettingsDialog from '../components/settings';
 
 
 const styles = {
@@ -57,13 +50,6 @@ const styles = {
         margin: '0 0 10px 0',
         color: '#999999'
     },
-    toggleItem: {
-        margin: 0
-    },
-    toggleLabel: {
-        margin: '0 9px',
-        fontSize: 16
-    },
 };
 
 
@@ -89,61 +75,29 @@ class ButtonAppBar extends React.Component {
         });
     };
 
-    handleChange = (item) => {
-        this.props.hideBGAction(!item)
-    };
 
-    handleChangeLang = (lang) => {
-        this.props.i18n.changeLanguage(lang);
-    };
 
     render() {
         const {t, classes, list_key, lists} = this.props;
-
-
         let list_title = lists[list_key].title;
 
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    <ListItemLink title={t('menu.main')} to='/' icon={<Store/>}/>
-                    <ListItemLink title={t('menu.lists')} to='/lists/' icon={<ListIcon/>}/>
-                    <ListItemLink title={t('menu.login')} to='/login/' icon={<AccountBox/>}/>
-                    <Divider />
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={this.props.app_bg}
-                                onChange= {() => this.handleChange(this.props.app_bg)}
-                                color="primary"
-                            />
-                        }
-                        label={t('menu.beaut_bg')}
-                        classes = {{ root: classes.toggleItem, label: classes.toggleLabel }}
-                    />
-                    <Divider />
-                    <ListItem button onClick={() => this.props.deleteIndexedDBAction()}>
-                        <ListItemIcon>
-                            <DeleteIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Очистить БД"/>
-                    </ListItem>
-                    <Divider />
-                    <ListItemLink title={t('menu.about')} to='/about/' icon={<Info/>}/>
-
-                    <Divider />
-                    <ListItem button onClick={() => this.handleChangeLang('ru')}>
-                        <ListItemIcon>
-                            <DeleteIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="RU"/>
-                    </ListItem>
-                    <ListItem button onClick={() => this.handleChangeLang('en')}>
-                        <ListItemIcon>
-                            <DeleteIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="EN"/>
-                    </ListItem>
+                    <div
+                        tabIndex={0}
+                        role="button"
+                        onClick={this.toggleDrawer('left', false)}
+                        onKeyDown={this.toggleDrawer('left', false)}
+                    >
+                        {/*<ListItemLink title={t('menu.main')} to='/' icon={<Store/>}/>*/}
+                        <ListItemLink title={t('menu.lists')} to='/lists/' icon={<ListIcon/>}/>
+                        <ListItemLink title={t('menu.login')} to='/login/' icon={<AccountBox/>}/>
+                        <Divider />
+                        <ListItemLink title={t('menu.about')} to='/about/' icon={<Info/>}/>
+                        <Divider />
+                    </div>
+                    <SettingsDialog/>
                 </List>
             </div>
         );
@@ -183,8 +137,8 @@ class ButtonAppBar extends React.Component {
                     <div
                         tabIndex={0}
                         role="button"
-                        onClick={this.toggleDrawer('left', false)}
-                        onKeyDown={this.toggleDrawer('left', false)}
+                        // onClick={this.toggleDrawer('left', false)}
+                        // onKeyDown={this.toggleDrawer('left', false)}
                     >
                         <Grid container wrap="nowrap" spacing={16}>
                             <Grid item>
@@ -219,11 +173,5 @@ const mapStateToProps = store => {
     }
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        deleteIndexedDBAction: () => dispatch(deleteIndexedDB()),
-        hideBGAction: (item) => dispatch(hideBG(item)),
-    }
-};
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withRouter(withStyles(styles)(ButtonAppBar))));
+export default connect(mapStateToProps)(withTranslation()(withRouter(withStyles(styles)(ButtonAppBar))));

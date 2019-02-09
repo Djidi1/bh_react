@@ -4,6 +4,20 @@
         "login": "Login",
         "lists": "Lists",
         "about": "About",
+        "clear_db": "Clear DB",
         "beaut_bg": "Beautiful background"
+    },
+    "list": {
+        "add_thing": "Add something...",
+        "show_done": "show completed"
+    },
+    "lists": {
+        "create_list": "Add new list",
+        "list_title": "Title",
+        "apply": "Apply",
+        "cancel": "Cancel"
+    },
+    "settings": {
+        "title": "Settings"
     }
 }

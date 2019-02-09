@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {withTranslation} from "react-i18next";
 import PropTypes from 'prop-types';
 import connect from "react-redux/es/connect/connect";
 import {withStyles} from "@material-ui/core/styles/index";
@@ -177,7 +178,7 @@ class ListItems extends React.Component {
     };
 
     render() {
-        const { classes, list_key } = this.props;
+        const { t, classes, list_key } = this.props;
         const { fade_checked } = this.state;
 
         let items = [];
@@ -215,7 +216,7 @@ class ListItems extends React.Component {
                                 color="secondary"
                             />
                         }
-                        label="Показать завершенные"
+                        label={t('list.show_done')}
                         classes = {{ label: classes.toggleLabel, root: classes.toggleRoot }}
                     />
                 </div>
@@ -245,4 +246,4 @@ const mapStateToProps = store => {
 };
 
 
-export default connect(mapStateToProps)(withStyles(styles)(ListItems));
+export default connect(mapStateToProps)(withStyles(styles)(withTranslation()(ListItems)));

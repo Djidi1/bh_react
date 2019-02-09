@@ -1,4 +1,5 @@
 import React from 'react';
+import {withTranslation} from "react-i18next";
 
 import updateIDB from './updateIndexDB';
 
@@ -89,7 +90,7 @@ class AddThinks extends React.Component {
     };
 
     render() {
-        const { classes } = this.props;
+        const { t, classes } = this.props;
 
         return (
             <AppBar position="sticky" classes={{root: classes.subAppBar}}>
@@ -105,7 +106,7 @@ class AddThinks extends React.Component {
                         },
                     }}
                     variant="outlined"
-                    label="Добавить что-то..."
+                    label={t('list.add_thing')}
                     value={this.state.new_item}
                     onChange={this.handleChange('new_item')}
                     onKeyPress={this.handleKeyPress}
@@ -143,4 +144,4 @@ AddThinks.propTypes = {
 };
 
 
-export default withStyles(styles)(AddThinks);
+export default withStyles(styles)(withTranslation()(AddThinks));

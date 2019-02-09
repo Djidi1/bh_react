@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux'
 import {Link} from "react-router-dom";
+import {withTranslation} from "react-i18next";
 
 import {withStyles} from '@material-ui/core/styles';
 import List from "@material-ui/core/List/List";
@@ -47,20 +48,18 @@ class ListsPage extends React.Component {
     state = {
         open: false,
         edit_item: {},
-        prev_item: {},
         list_key: 0,
     };
 
     handleClickOpen = (item, index) => ()  => {
-        this.setState({ open: true, edit_item: {...item}, prev_item: {...item}, list_key: index });
+        this.setState({ open: true, edit_item: {...item}, list_key: index });
     };
 
     handleSave = () => {
-        updateIDB({type: 'SET_LIST_TITLE', payload: this.state.edit_item, list_key: this.state.list_key}, '','lists').then();
         this.setState({ open: false });
+        updateIDB({type: 'SET_LIST_TITLE', payload: this.state.edit_item, list_key: this.state.list_key}, '','lists').then();
     };
-    handleClose = (item) => () => {
-        item = this.state.prev_item;
+    handleClose = () => {
         this.setState({ open: false });
     };
     handleChange = () => event => {
@@ -75,12 +74,11 @@ class ListsPage extends React.Component {
     };
 
     handleToggle = (index) => () => {
-
         this.props.setListKey(index);
     };
 
     render() {
-        const {classes, lists, list_key} = this.props;
+        const {t, classes, lists, list_key} = this.props;
 
         return (
             <div>
@@ -91,12 +89,12 @@ class ListsPage extends React.Component {
                     onClose={this.handleClose}
                     aria-labelledby="form-dialog-title"
                 >
-                    <DialogTitle id="form-dialog-title">Название</DialogTitle>
+                    <DialogTitle id="form-dialog-title">{t('lists.list_title')}</DialogTitle>
                     <DialogContent>
                         <TextField
                             autoFocus
                             margin="dense"
-                            label="List title"
+                            label={t('lists.list_title')}
                             type="text"
                             value={this.state.edit_item.title}
                             onChange={this.handleChange('edit_item')}
@@ -106,10 +104,10 @@ class ListsPage extends React.Component {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.handleClose} color="secondary">
-                            Cancel
+                            {t('lists.cancel')}
                         </Button>
                         <Button onClick={this.handleSave} color="primary">
-                            Apply
+                            {t('lists.apply')}
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -123,7 +121,7 @@ class ListsPage extends React.Component {
                             button
                             onClick={this.handleToggle(index)}
                             component={Link}
-                            to="/"
+                            to="/list"
                         >
                             <Radio
                                 checked={Number(list_key) === Number(index)}
@@ -165,4 +163,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ListsPage));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(withTranslation()(ListsPage)));

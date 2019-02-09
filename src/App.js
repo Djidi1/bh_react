@@ -78,7 +78,6 @@ class App extends Component {
             if (lists !== undefined) {
                 lists = lists[0] !== undefined ? lists[0] : lists;
                 this.setState({loading: false});
-                console.log(lists);
                 const items = lists.items || [];
                 const done_items = lists.done_items || [];
                 this.setState({items: items, done_items: done_items});
@@ -109,7 +108,8 @@ class App extends Component {
                     }
                     <div className={'App' + (this.props.app_bg ? ' photo-background' : '')}>
                         <ButtonAppBar/>
-                        <Route exact path='/' component={Home}/>
+                        <Route exact path='/' component={Lists}/>
+                        <Route exact path='/list' component={Home}/>
                         <Route path='/lists' component={Lists}/>
                         <Route path='/requests' component={Requests}/>
                         <Route path='/registration' component={Registration}/>
@@ -125,9 +125,8 @@ class App extends Component {
 
 // приклеиваем данные из store
 const mapStateToProps = store => {
-
-    console.log(React.version);
-    console.log(store);
+    // console.log(React.version);
+    // console.log(store);
     return {
         app_bg: store.app.app_bg,
     }

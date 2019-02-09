@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {withTranslation} from "react-i18next";
 import updateIDB from './updateIndexDB';
 
 import classNames from 'classnames';
@@ -80,7 +80,7 @@ class AddList extends React.Component {
     };
 
     render() {
-        const { classes } = this.props;
+        const { t, classes } = this.props;
 
         return (
             <AppBar position="sticky" classes={{root: classes.subAppBar}}>
@@ -96,7 +96,7 @@ class AddList extends React.Component {
                         },
                     }}
                     variant="outlined"
-                    label="Добавить список..."
+                    label={t('lists.create_list')}
                     value={this.state.new_item}
                     onChange={this.handleChange('new_list')}
                     onKeyPress={this.handleKeyPress}
@@ -135,4 +135,4 @@ AddList.propTypes = {
 
 
 
-export default withStyles(styles)(AddList);
+export default withStyles(styles)(withTranslation()(AddList));
