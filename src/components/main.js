@@ -15,7 +15,7 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
-import { Info, AccountBox } from '@material-ui/icons';
+import { AccountBox } from '@material-ui/icons';
 import ListIcon from '@material-ui/icons/FormatListNumbered'
 import MenuIcon from '@material-ui/icons/Menu';
 
@@ -63,6 +63,12 @@ class ButtonAppBar extends React.Component {
         });
     }
 
+    componentDidMount() {
+        ( () => {
+            this.setState({ pathname: this.props.history.location.pathname });
+        })()
+    }
+
     state = {
         left: false,
         selectedIndex: 1,
@@ -91,11 +97,10 @@ class ButtonAppBar extends React.Component {
                         onKeyDown={this.toggleDrawer('left', false)}
                     >
                         {/*<ListItemLink title={t('menu.main')} to='/' icon={<Store/>}/>*/}
-                        <ListItemLink title={t('menu.lists')} to='/lists/' icon={<ListIcon/>}/>
                         <ListItemLink title={t('menu.login')} to='/login/' icon={<AccountBox/>}/>
-                        <Divider />
-                        <ListItemLink title={t('menu.about')} to='/about/' icon={<Info/>}/>
-                        <Divider />
+                        <ListItemLink title={t('menu.lists')} to='/lists/' icon={<ListIcon/>}/>
+                        {/*<Divider />*/}
+                        {/*<ListItemLink title={t('menu.about')} to='/about/' icon={<Info/>}/>*/}
                     </div>
                     <SettingsDialog/>
                 </List>
@@ -104,7 +109,7 @@ class ButtonAppBar extends React.Component {
 
         let btnList;
 
-        if (this.state.pathname === '/lists/') {
+        if (this.state.pathname === '/lists/' || this.state.pathname === '/') {
             list_title = 'To-Do Lists';
             btnList = <div className="app-icon" title={this.props.app_name}/>;
         } else {

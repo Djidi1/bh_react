@@ -14,7 +14,7 @@ import './fonts.css'
 const startApp = () => {
     ReactDOM.render(
         <Provider store={store}>
-            <IntlProvider>
+            <IntlProvider locale={'en'}>
                 <App />
             </IntlProvider>
         </Provider>,

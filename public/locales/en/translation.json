@@ -18,6 +18,7 @@
         "cancel": "Cancel"
     },
     "settings": {
-        "title": "Settings"
+        "title": "Settings",
+        "language": "Language"
     }
 }

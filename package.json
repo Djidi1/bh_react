@@ -1,6 +1,6 @@
 {
-  "name": "bh",
-  "version": "1.0.5",
+  "name": "just_todo",
+  "version": "1.0.10",
   "private": true,
   "homepage": "./",
   "dependencies": {

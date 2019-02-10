@@ -21,6 +21,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabe
 import Switch from "@material-ui/core/Switch/Switch";
 import deleteIndexedDB from "../actions/deleteIndexedDB";
 import hideBG from "../actions/hideBG";
+import ListSubheader from "@material-ui/core/ListSubheader/ListSubheader";
 
 const styles = {
     appBar: {
@@ -30,12 +31,23 @@ const styles = {
         flex: 1,
     },
     toggleItem: {
-        margin: 0
+        margin: 0,
     },
     toggleLabel: {
         margin: '0 9px',
-        fontSize: 16
+        fontSize: 16,
     },
+    formControl: {
+        marginTop: 8,
+        width: '100%',
+    },
+    select_lang: {
+        height: 48,
+        padding: 0,
+    },
+    switcher_lang: {
+        marginRight: -8,
+    }
 };
 
 function Transition(props) {
@@ -45,7 +57,14 @@ function Transition(props) {
 class SettingsDialog extends React.Component {
     state = {
         open: false,
+        language: 'ru'
     };
+
+    componentDidMount() {
+        ( () => {
+            this.setState({ language: this.props.i18n.language });
+        })()
+    }
 
     handleClose = () => {
         this.setState({ open: false });
@@ -60,22 +79,24 @@ class SettingsDialog extends React.Component {
     };
 
     handleChangeLang = (lang) => {
+        this.setState({ language: lang });
         this.props.i18n.changeLanguage(lang);
     };
 
     render() {
         const { t, classes } = this.props;
+        const { open, language } = this.state;
         return (
             <div>
                 <ListItem button onClick={this.handleClickOpenSettings}>
                     <ListItemIcon>
                         <SettingsIcon/>
                     </ListItemIcon>
-                    <ListItemText primary="Settings"/>
+                    <ListItemText primary= {t("settings.title")}/>
                 </ListItem>
                 <Dialog
                     fullScreen
-                    open={this.state.open}
+                    open={open}
                     onClose={this.handleClose}
                     TransitionComponent={Transition}
                 >
@@ -87,12 +108,28 @@ class SettingsDialog extends React.Component {
                             <Typography variant="h6" color="inherit" className={classes.flex}>
                                 {t("settings.title")}
                             </Typography>
-                            {/*<Button color="inherit" onClick={this.handleClose}>*/}
-                                {/*save*/}
-                            {/*</Button>*/}
                         </Toolbar>
                     </AppBar>
-                    <List>
+                    <List
+                        subheader={<ListSubheader component="div">{t("settings.language")}</ListSubheader>}
+                    >
+                        <ListItem className={classes.select_lang} button onClick={() => this.handleChangeLang('ru')}>
+                            <Switch
+                                className={classes.switcher_lang}
+                                checked={language === 'ru'}
+                                color="secondary"
+                            />
+                            <ListItemText primary="Russian"/>
+                        </ListItem>
+                        <ListItem className={classes.select_lang} button onClick={() => this.handleChangeLang('en')}>
+                            <Switch
+                                className={classes.switcher_lang}
+                                checked={language === 'en'}
+                                color="secondary"
+                            />
+                            <ListItemText primary="English"/>
+                        </ListItem>
+                        <Divider />
                         <FormControlLabel
                             control={
                                 <Switch
@@ -112,18 +149,6 @@ class SettingsDialog extends React.Component {
                             <ListItemText primary={t('menu.clear_db')}/>
                         </ListItem>
                         <Divider />
-                        <ListItem button onClick={() => this.handleChangeLang('ru')}>
-                            <ListItemIcon>
-                                <DeleteIcon/>
-                            </ListItemIcon>
-                            <ListItemText primary="RU"/>
-                        </ListItem>
-                        <ListItem button onClick={() => this.handleChangeLang('en')}>
-                            <ListItemIcon>
-                                <DeleteIcon/>
-                            </ListItemIcon>
-                            <ListItemText primary="EN"/>
-                        </ListItem>
                     </List>
                 </Dialog>
             </div>
