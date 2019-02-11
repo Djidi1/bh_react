@@ -1,7 +1,8 @@
 {
     "menu": {
         "main": "Main",
-        "login": "Login",
+        "login": "Sign in",
+        "logout": "Logout",
         "lists": "Lists",
         "about": "About",
         "clear_db": "Clear DB",
@@ -20,5 +21,21 @@
     "settings": {
         "title": "Settings",
         "language": "Language"
+    },
+    "sign_in": {
+        "title": "Sign in to Just To-Do",
+        "forgot_title": "Reset your password",
+        "sign_on_title": "Create your personal account",
+        "confirmation": "Confirmation",
+        "are_you_sore": "Are you sore?",
+        "username": "User name",
+        "email": "Email address",
+        "password": "Password",
+        "cancel": "Cancel",
+        "ok": "Ok",
+        "sign_in": "Sign in",
+        "or": "or",
+        "sign_on": "Create an account",
+        "send": "Send password reset email"
     }
 }

@@ -35,6 +35,7 @@ const styles = () => ({
         opacity: 0.95,
         padding: '0 0 0 52px',
         width: 'calc(100vw - 8px)',
+        minHeight: 46,
     },
     item: {
         fontWeight: '300',

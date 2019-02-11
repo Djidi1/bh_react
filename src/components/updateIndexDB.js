@@ -1,19 +1,36 @@
 import {deleteDb, openDb} from "idb";
 import {store} from '../store/configureStore'
 import updateItems from "../actions/updateItems";
+import updateUser from "../actions/updateUser";
 
 let db = 'bh_db';
 let list_table = 'lists';
+let user_table = 'user';
 
 // create table on start app
-const dbPromise = openDb(db, 3, upgradeDB => {
-    upgradeDB.createObjectStore(list_table);
+const dbPromise = openDb(db, 5, upgradeDB => {
+    // if updating new DB
+    if (upgradeDB.oldVersion === 0) {
+        upgradeDB.createObjectStore(list_table);
+        upgradeDB.createObjectStore(user_table, {keyPath: "id", autoIncrement: true});
+    }
+    // if updating exist DB and don't know last version
+    if (upgradeDB.oldVersion > 0) {
+        upgradeDB.createObjectStore(user_table, {keyPath: "id", autoIncrement: true});
+    }
 });
 
 const idbKeyval = {
     async get(table, key) {
         const db = await dbPromise;
         return db.transaction(table).objectStore(table).get(key);
+    },
+    async setUser(user) {
+        const db = await dbPromise;
+
+        const tx = db.transaction(user_table, 'readwrite');
+        tx.objectStore(user_table).clear().then();
+        tx.objectStore(user_table).put(user).then();
     },
     async set(list_table, list_key, table, val) {
         const db = await dbPromise;
@@ -172,6 +189,12 @@ async function updateIDB(action, table, list_table) {
             deleteDb(db).then();
             break;
         }
+        case 'SET_USER': {
+            await idbKeyval.setUser(action.payload);
+            store.dispatch(updateUser(action.payload));
+            break;
+        }
+
         default:
             break;
     }

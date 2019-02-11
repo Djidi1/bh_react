@@ -15,12 +15,12 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
-import { AccountBox } from '@material-ui/icons';
 import ListIcon from '@material-ui/icons/FormatListNumbered'
 import MenuIcon from '@material-ui/icons/Menu';
 
 import ListItemLink from '../components/ListItemLink';
 import SettingsDialog from '../components/settings';
+import SignInDialog from './signin';
 
 
 const styles = {
@@ -90,17 +90,14 @@ class ButtonAppBar extends React.Component {
         const sideList = (
             <div className={classes.list}>
                 <List>
+                    <SignInDialog/>
                     <div
                         tabIndex={0}
                         role="button"
                         onClick={this.toggleDrawer('left', false)}
                         onKeyDown={this.toggleDrawer('left', false)}
                     >
-                        {/*<ListItemLink title={t('menu.main')} to='/' icon={<Store/>}/>*/}
-                        <ListItemLink title={t('menu.login')} to='/login/' icon={<AccountBox/>}/>
                         <ListItemLink title={t('menu.lists')} to='/lists/' icon={<ListIcon/>}/>
-                        {/*<Divider />*/}
-                        {/*<ListItemLink title={t('menu.about')} to='/about/' icon={<Info/>}/>*/}
                     </div>
                     <SettingsDialog/>
                 </List>

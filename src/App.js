@@ -14,6 +14,7 @@ import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 
 import Fade from "@material-ui/core/Fade/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+import updateUser from "./actions/updateUser";
 
 const theme = createMuiTheme({
     typography: {
@@ -37,9 +38,15 @@ const theme = createMuiTheme({
 });
 
 async function getAllData(props, lists) {
-    openDb('bh_db', 3, upgradeDB => {
+    openDb('bh_db', 5, upgradeDB => {
+        // if updating new DB
         if (upgradeDB.oldVersion === 0) {
             upgradeDB.createObjectStore(lists);
+            upgradeDB.createObjectStore('user', {keyPath: "id", autoIncrement: true});
+        }
+        // if updating exist DB and don't know last version
+        if (upgradeDB.oldVersion > 0) {
+                upgradeDB.createObjectStore('user', {keyPath: "id", autoIncrement: true});
         }
     }).then(async db => {
         let tx = db.transaction(lists, 'readonly');
@@ -62,9 +69,14 @@ async function getAllData(props, lists) {
             };
             props.writeItemsAction(result_store, list_key);
         });
+        // get User from store
+        store = db.transaction('user', 'readonly').objectStore('user');
+        store.getAll()
+            .then((user) => props.writeUserAction(user[0]))
+            .catch((err) => console.log(err));
         db.close();
         return allSavedLists;
-    });
+    })
 }
 
 class App extends Component {
@@ -126,7 +138,7 @@ class App extends Component {
 // приклеиваем данные из store
 const mapStateToProps = store => {
     // console.log(React.version);
-    // console.log(store);
+    console.log(store);
     return {
         app_bg: store.app.app_bg,
     }
@@ -135,6 +147,7 @@ const mapStateToProps = store => {
 const mapDispatchToProps = dispatch => {
     return {
         writeItemsAction: (items, list_key) => dispatch(updateItems(items, list_key)),
+        writeUserAction: (user) => dispatch(updateUser(user)),
     }
 };
 

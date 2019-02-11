@@ -1,11 +1,15 @@
 const initialState = {
     user_id: 1,
-    name: 'UserName',
-    email: 'mail@mail.ru',
-    phone: '+7 812 123-4567',
-    comment: 'Comment',
+    name: 'User Name',
+    email: 'user@name.email',
 };
 
-export function userReducer(state = initialState) {
-    return state
+export function userReducer(state = initialState, action) {
+    switch (action.type) {
+        case 'UPDATE_USER': {
+            return action.payload;
+        }
+        default:
+            return state
+    }
 }

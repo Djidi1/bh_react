@@ -2,6 +2,7 @@
   "menu": {
     "main": "Главная",
     "login": "Вход",
+    "logout": "Выход",
     "lists": "Списки",
     "about": "О программе",
     "clear_db": "Очистить БД",
@@ -20,5 +21,21 @@
   "settings": {
     "title": "Настройки",
     "language": "Язык приложения"
+  },
+  "sign_in": {
+    "title": "Войти в Just To-Do",
+    "forgot_title": "Сбросить пароль",
+    "sign_on_title": "Create your personal account",
+    "confirmation": "Подтверждение",
+    "are_you_sore": "Вы уверены?",
+    "username": "User name",
+    "email": "Email",
+    "password": "Пароль",
+    "cancel": "Отмена",
+    "ok": "Да",
+    "sign_in": "Войти",
+    "sign_on": "Создать аккаунт",
+    "or": "или",
+    "send": "Отправить письмо для сброса пароля"
   }
 }
