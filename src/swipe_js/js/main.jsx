@@ -13,7 +13,8 @@ export default class SwipeToDelete extends React.Component {
 
     this.state = {
         isDeleted: false,
-        moveLimit: 40
+        moveLimit: 40,
+        swipePercent: 0
     };
 
     this.model = new Model({deleteSwipe: this.props.deleteSwipe});
@@ -27,12 +28,11 @@ export default class SwipeToDelete extends React.Component {
     // if (this.state.isDeleted) {
     //   return null;
     // }
-
     return React.createElement(
       this.props.tag,
       {className: `swipe-to-delete ${this.props.classNameTag}`},
       [
-        <div key="delete" className="js-delete">{this.props.background}</div>,
+        <div key="delete" className="js-delete" ref={el => this.regionDelete = el}>{this.props.background}</div>,
         <div key="content" className="js-content" ref={el => this.regionContent = el}>{this.props.children}</div>
       ]
     );
@@ -89,8 +89,16 @@ export default class SwipeToDelete extends React.Component {
 
     moveAt(e) {
         const target = this.regionContent.firstChild;
+        const target_del = this.regionDelete;
         const res = this.device.getPageX(e) - this.model.startX;
-        if (res < -this.state.moveLimit) {
+
+        if (res > 0) {
+            target_del.style.background = '#673ab7'
+        }else{
+            target_del.style.background = '#ff5722'
+        }
+
+        if (res < -this.state.moveLimit || res > this.state.moveLimit) {
             if (this.state.moveLimit > 0) {
                 this.setState({moveLimit: 0});
             }
@@ -140,16 +148,17 @@ export default class SwipeToDelete extends React.Component {
   endInteract() {
     const target = this.regionContent.firstChild;
     const swipePercent = this.getSwipePercent();
+    this.setState({swipePercent: swipePercent});
 
     const promise = new Promise((resolve, reject) => {
-      if (this.model.isDelete(swipePercent)) {
-        target.addEventListener('transitionend', e => resolve(e), false);
-        // TODO: помоему можно упростить: просто посмотреть на знак оффсета
-        swipePercent < 0 ? target.classList.add('js-transition-delete-left') : target.classList.add('js-transition-delete-right');
-      } else {
+      // if (this.model.isDelete(swipePercent)) {
+      //   target.addEventListener('transitionend', e => resolve(e), false);
+      //   target.classList.add('js-transition-cancel');
+      //   // swipePercent < 0 ? target.classList.add('js-transition-delete-left') : target.classList.add('js-transition-delete-right');
+      // } else {
         target.addEventListener('transitionend', e => reject(e), false);
         target.classList.add('js-transition-cancel');
-      }
+      // }
     });
 
     promise
@@ -176,8 +185,11 @@ export default class SwipeToDelete extends React.Component {
     }
 
   onCancel(e) {
-    this.props.onCancel();
-
+    if (this.model.isDelete(this.state.swipePercent)) {
+        this.props.onDelete();
+    } else {
+        this.props.onCancel();
+    }
     const target = e.currentTarget;
     target.classList.remove('js-transition-cancel');
 

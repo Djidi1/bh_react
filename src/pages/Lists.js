@@ -54,7 +54,7 @@ const styles = () => ({
     summary: {
         fontSize: '0.8rem !important',
         padding: '12px',
-        color: '#6269b9',
+        color: '#7e57c2',
     },
     edit_btn: {
         left: '4px',

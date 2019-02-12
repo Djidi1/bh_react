@@ -9,7 +9,7 @@ import { Home, Login, About, Registration, Requests, Lists} from './pages';
 import updateItems from "./actions/updateItems";
 
 import {createMuiTheme} from "@material-ui/core";
-import {indigo, orange} from "@material-ui/core/colors";
+import {deepPurple, orange} from "@material-ui/core/colors";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 
 import Fade from "@material-ui/core/Fade/Fade";
@@ -21,7 +21,7 @@ const theme = createMuiTheme({
         useNextVariants: true,
     },
     palette: {
-        primary: indigo,
+        primary: deepPurple,
         secondary: orange,
     },
     loader: {

@@ -18,9 +18,9 @@ const styles = theme => ({
         useNextVariants: true,
     },
     subAppBar: {
-        backgroundColor: '#5C6BC0',
+        backgroundColor: '#7e57c2',
         marginBottom: 5,
-        opacity: 0.9
+        opacity: 0.8
     },
     title: {
         color: '#FFFFFF',

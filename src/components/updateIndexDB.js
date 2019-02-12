@@ -175,6 +175,28 @@ async function updateIDB(action, table, list_table) {
 
             break;
         }
+        case 'RENAME_ITEM': {
+            // 1. get all data in list
+            let all_lists = await idbKeyval.getAllFromList(list_table, list_key);
+            // 2. prepare data for storage
+            let result_store = all_lists[0];
+            console.log(result_store, action.payload);
+            // 3. update item in store
+            if (action.payload.checked) {
+                result_store['done_items'][action.payload.key] = action.payload;
+            }else{
+                result_store['items'][action.payload.key] = action.payload;
+            }
+
+            // 4. update stores
+            store.dispatch(updateItems(result_store, list_key));
+
+            // 5. update IDB
+            await idbKeyval.deleteList(list_table, list_key);
+            await idbKeyval.setList(list_table, list_key, result_store);
+
+            break;
+        }
         case 'UPDATE_ITEMS': {
             // update store
             store.dispatch(updateItems(action.payload, list_key, table));

@@ -14,9 +14,8 @@ import AppBar from "@material-ui/core/AppBar/AppBar";
 
 const styles = theme => ({
     subAppBar: {
-        backgroundColor: '#5C6BC0',
-        marginBottom: 5,
-        opacity: 0.9
+        backgroundColor: '#7e57c2',
+        opacity: 0.8
     },
     root: {
         display: 'flex',
