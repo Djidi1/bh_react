@@ -129,7 +129,7 @@ class ListItemComponent extends Component {
     state = {
         action: '',
         open: false,
-        edit_item: ''
+        edit_item: {}
     };
 
     handleToggle = (item) => () => {
