@@ -302,6 +302,7 @@ class ListItems extends React.Component {
                         items={done_items}
                         list_key={list_key}
                         classes={classes}
+                        t={t}
                         table='done_items'
                     />
                 </Slide>
