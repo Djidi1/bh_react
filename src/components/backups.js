@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import connect from "react-redux/es/connect/connect";
+import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
+
 import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
-// import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -18,12 +18,13 @@ import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
 import BackupIcon from '@material-ui/icons/Backup';
 import CachedIcon from '@material-ui/icons/Cached';
 import HistoryIcon from "@material-ui/icons/History";
-import deleteIndexedDB from "../actions/deleteIndexedDB";
-import updateIDB from "./updateIndexDB";
 import Button from "@material-ui/core/Button/Button";
 import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions/DialogActions";
+
+import deleteIndexedDB from "../actions/deleteIndexedDB";
+import updateIDB from "./updateIndexDB";
 
 const styles = {
     appBar: {
@@ -62,8 +63,8 @@ function Transition(props) {
     return <Slide direction="up" {...props} />;
 }
 
-async function getBackupsList(token) {
-    return await fetch('http://localhost:8000/api/backups_all', {
+async function getBackupsList(backend_url, token) {
+    return await fetch(backend_url + '/api/backups_all', {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -74,8 +75,8 @@ async function getBackupsList(token) {
 }
 
 
-async function saveBackups(token,lists) {
-    return await fetch('http://localhost:8000/api/backup_save', {
+async function saveBackups(backend_url, token,lists) {
+    return await fetch(backend_url + '/api/backup_save', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -102,8 +103,9 @@ class BackupsDialog extends React.Component {
     }
 
     handleRefresh = () => {
+        const {backend_url, token} = this.props;
         this.setState({ loading: true });
-        getBackupsList(this.props.token).then(response => response.json())
+        getBackupsList(backend_url, token).then(response => response.json())
             .then(json => {
                 if (json.status !== "error") {
                     updateIDB({type: 'SET_BACKUPS', payload: json}).then();
@@ -115,8 +117,9 @@ class BackupsDialog extends React.Component {
     };
 
     handleSave = () => {
+        const {backend_url, token, lists} = this.props;
         this.setState({ loading: true });
-        saveBackups(this.props.token, this.props.lists).then(response => response.json())
+        saveBackups(backend_url, token, lists).then(response => response.json())
             .then(json => {
                 if (json.status !== "error") {
                     console.log(json);
@@ -254,7 +257,8 @@ const mapStateToProps = store => {
     return {
         token: store.user.token,
         lists: store.lists,
-        backups: store.backups
+        backups: store.backups,
+        backend_url: store.app.backend_url,
     }
 };
 

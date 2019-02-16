@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from "react-redux";
 import {withStyles} from "@material-ui/styles";
 
 import {withTranslation} from "react-i18next";
@@ -16,7 +17,6 @@ import Avatar from "@material-ui/core/Avatar/Avatar";
 import Typography from "@material-ui/core/Typography/Typography";
 import SignOnDialog from './signon'
 import updateIDB from "./updateIndexDB";
-import connect from "react-redux/es/connect/connect";
 
 const styles = {
     center: {
@@ -37,8 +37,8 @@ const styles = {
     }
 };
 
-async function sign_in(email, password) {
-    return await fetch('http://localhost:8000/api/auth/login', {
+async function sign_in(backend_url, email, password) {
+    return await fetch(backend_url + '/api/auth/login', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -86,8 +86,9 @@ class SignInDialog extends React.Component {
     };
 
     handleSignIn = () => {
+        const {backend_url} = this.props;
         const {email, password} = this.state;
-        sign_in(email, password).then(response => response.json())
+        sign_in(backend_url, email, password).then(response => response.json())
             .then(json => {
                 console.log(json);
                 if (json.status !== "error") {
@@ -204,6 +205,7 @@ class SignInDialog extends React.Component {
 const mapStateToProps = store => {
     return {
         user: store.user,
+        backend_url: store.app.backend_url,
     }
 };
 

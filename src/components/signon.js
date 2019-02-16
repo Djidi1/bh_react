@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from "react-redux";
 import {withStyles} from "@material-ui/styles";
 
 import {withTranslation} from "react-i18next";
@@ -30,8 +31,8 @@ const styles = {
     }
 };
 
-async function sign_on(username, email, password) {
-    return await fetch('http://localhost:8000/api/auth/register', {
+async function sign_on(backend_url, username, email, password) {
+    return await fetch(backend_url + '/api/auth/register', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -68,8 +69,9 @@ class SignOnDialog extends React.Component {
     };
 
     handleSignOn = () => {
+        const {backend_url} = this.props;
         const {username, email, password} = this.state;
-        sign_on(username, email, password).then(response => response.json())
+        sign_on(backend_url, username, email, password).then(response => response.json())
             .then(json => {
                 console.log(json);
                 if (json.errors) {
@@ -151,5 +153,10 @@ class SignOnDialog extends React.Component {
     }
 }
 
+const mapStateToProps = store => {
+    return {
+        backend_url: store.app.backend_url,
+    }
+};
 
-export default withStyles(styles)(withTranslation()(SignOnDialog));
+export default connect(mapStateToProps)(withStyles(styles)(withTranslation()(SignOnDialog)));
