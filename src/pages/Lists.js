@@ -22,7 +22,6 @@ import AddList from "../components/AddList";
 import updateIDB from "../components/updateIndexDB";
 import Typography from "@material-ui/core/Typography/Typography";
 
-
 const styles = () => ({
     root: {
         width: '100%',
@@ -66,6 +65,8 @@ const styles = () => ({
 class ListsPage extends React.Component {
     state = {
         open: false,
+        remove_open: false,
+        loading: false,
         edit_item: {},
         list_key: 0,
     };
@@ -100,6 +101,22 @@ class ListsPage extends React.Component {
         this.props.setListKey(index);
     };
 
+    handleConfirmDelete = () => {
+        this.setState({ loading: true });
+        const self = this;
+        updateIDB({type: 'REMOVE_LIST', payload: this.state.list_key}).then(function () {
+            self.setState({ loading: false, remove_open: false, open: false });
+        });
+    };
+
+    handleConfirmClose = () => {
+        this.setState({ remove_open: false });
+    };
+
+    handleClickOpenConfirm = () => {
+        this.setState({ remove_open: true});
+    };
+
     render() {
         const {t, classes, lists} = this.props;
 
@@ -112,7 +129,7 @@ class ListsPage extends React.Component {
                     onClose={this.handleClose}
                     aria-labelledby="form-dialog-title"
                 >
-                    <DialogTitle id="form-dialog-title">{t('lists.list_title')}</DialogTitle>
+                    <DialogTitle id="form-dialog-title">{t('lists.list_edit')}</DialogTitle>
                     <DialogContent>
                         <TextField
                             autoFocus
@@ -126,6 +143,9 @@ class ListsPage extends React.Component {
                         />
                     </DialogContent>
                     <DialogActions>
+                        <Button onClick={this.handleClickOpenConfirm} color="inherit">
+                            {t('lists.remove')}
+                        </Button>
                         <Button onClick={this.handleClose} color="secondary">
                             {t('lists.cancel')}
                         </Button>
@@ -134,6 +154,29 @@ class ListsPage extends React.Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
+
+                <Dialog
+                    fullWidth
+                    open={this.state.remove_open}
+                    onClose={this.handleConfirmClose}
+                    aria-labelledby="form-dialog-title"
+                >
+                    <DialogTitle id="form-dialog-delete_list">{t('lists.are_you_sore')}</DialogTitle>
+                    <DialogContent>
+                        <Typography>
+                            {t('lists.are_you_sore_text')}
+                        </Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleConfirmClose} color="secondary">
+                            {t('lists.no')}
+                        </Button>
+                        <Button onClick={this.handleConfirmDelete} color="primary">
+                            {t('lists.yes')}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
                 <List className={classes.root}>
                     {Object.keys(lists).map((index) => (
                         <ListItem

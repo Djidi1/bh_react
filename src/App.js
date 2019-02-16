@@ -5,7 +5,7 @@ import { openDb } from "idb";
 import updateIDB from "./components/updateIndexDB";
 
 import ButtonAppBar from './components/main';
-import { Home, Login, About, Registration, Requests, Lists} from './pages';
+import { Home, About, Lists} from './pages';
 import updateItems from "./actions/updateItems";
 
 import {createMuiTheme} from "@material-ui/core";
@@ -15,6 +15,7 @@ import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import Fade from "@material-ui/core/Fade/Fade";
 import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 import updateUser from "./actions/updateUser";
+import updateBackups from "./actions/updateBackups";
 
 const theme = createMuiTheme({
     typography: {
@@ -38,15 +39,16 @@ const theme = createMuiTheme({
 });
 
 async function getAllData(props, lists) {
-    openDb('bh_db', 5, upgradeDB => {
+    openDb('bh_db', 6, upgradeDB => {
         // if updating new DB
         if (upgradeDB.oldVersion === 0) {
             upgradeDB.createObjectStore(lists);
             upgradeDB.createObjectStore('user', {keyPath: "id", autoIncrement: true});
+            upgradeDB.createObjectStore('backups', {keyPath: "id", autoIncrement: true});
         }
         // if updating exist DB and don't know last version
         if (upgradeDB.oldVersion > 0) {
-                upgradeDB.createObjectStore('user', {keyPath: "id", autoIncrement: true});
+            upgradeDB.createObjectStore('backups', {keyPath: "id", autoIncrement: true});
         }
     }).then(async db => {
         let tx = db.transaction(lists, 'readonly');
@@ -73,6 +75,11 @@ async function getAllData(props, lists) {
         store = db.transaction('user', 'readonly').objectStore('user');
         store.getAll()
             .then((user) => props.writeUserAction(user[0]))
+            .catch((err) => console.log(err));
+        // get Backups from store
+        store = db.transaction('backups', 'readonly').objectStore('backups');
+        store.getAll()
+            .then((backups) => props.writeBackupsAction(backups[0]))
             .catch((err) => console.log(err));
         db.close();
         return allSavedLists;
@@ -123,9 +130,6 @@ class App extends Component {
                         <Route exact path='/' component={Lists}/>
                         <Route exact path='/list' component={Home}/>
                         <Route path='/lists' component={Lists}/>
-                        <Route path='/requests' component={Requests}/>
-                        <Route path='/registration' component={Registration}/>
-                        <Route path='/login' component={Login}/>
                         <Route path='/about' component={About}/>
                     </div>
                 </MuiThemeProvider>
@@ -138,7 +142,7 @@ class App extends Component {
 // приклеиваем данные из store
 const mapStateToProps = store => {
     // console.log(React.version);
-    console.log(store);
+    // console.log(store);
     return {
         app_bg: store.app.app_bg,
     }
@@ -148,6 +152,7 @@ const mapDispatchToProps = dispatch => {
     return {
         writeItemsAction: (items, list_key) => dispatch(updateItems(items, list_key)),
         writeUserAction: (user) => dispatch(updateUser(user)),
+        writeBackupsAction: (backups) => dispatch(updateBackups(backups)),
     }
 };
 

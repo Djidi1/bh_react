@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {withTranslation} from "react-i18next";
 import PropTypes from 'prop-types';
-import connect from "react-redux/es/connect/connect";
+import {connect} from "react-redux";
+
 import {withStyles} from "@material-ui/core/styles/index";
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';

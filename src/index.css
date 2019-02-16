@@ -75,3 +75,9 @@ div.app-sign-in-logo {
   height: 60px;
   margin: 20px auto -15px;
 }
+
+.rotate {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { 100% { transform:rotate(-360deg); } }

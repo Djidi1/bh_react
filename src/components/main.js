@@ -20,6 +20,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 
 import ListItemLink from '../components/ListItemLink';
 import SettingsDialog from '../components/settings';
+import BackupsDialog from '../components/backups';
 import SignInDialog from './signin';
 
 
@@ -99,6 +100,7 @@ class ButtonAppBar extends React.Component {
                     >
                         <ListItemLink title={t('menu.lists')} to='/lists/' icon={<ListIcon/>}/>
                     </div>
+                    <BackupsDialog/>
                     <SettingsDialog/>
                 </List>
             </div>

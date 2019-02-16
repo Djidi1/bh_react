@@ -22,6 +22,13 @@ export function listsReducer(state = initialState, action) {
                 return {...state, [action.list_key]: items};
             }
         }
+        case 'REMOVE_LIST': {
+            delete state[action.payload];
+            return state;
+        }
+        case 'REMOVE_LISTS': {
+            return initialState;
+        }
         default:
             return state
     }

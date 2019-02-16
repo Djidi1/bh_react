@@ -15,12 +15,27 @@
     "lists": {
         "create_list": "Add new list",
         "list_title": "Title",
+        "list_edit": "Edit list",
+        "remove": "Remove",
         "apply": "Apply",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "are_you_sore": "Are you sore?",
+        "are_you_sore_text": "List will be removed.",
+        "yes": "Yes",
+        "no": "No"
     },
     "settings": {
         "title": "Settings",
         "language": "Language"
+    },
+    "backups": {
+        "title": "Backups",
+        "backup": "Backup",
+        "save_now": "Create backup now",
+        "are_you_sore": "Are you sore?",
+        "are_you_sore_text": "All data in the app will be replaced.",
+        "yes": "Yes",
+        "no": "No"
     },
     "sign_in": {
         "title": "Sign in to Just To-Do",

@@ -2,21 +2,26 @@ import {deleteDb, openDb} from "idb";
 import {store} from '../store/configureStore'
 import updateItems from "../actions/updateItems";
 import updateUser from "../actions/updateUser";
+import removeList from "../actions/removeList";
+import removeLists from "../actions/removeLists";
+import updateBackups from "../actions/updateBackups";
 
 let db = 'bh_db';
 let list_table = 'lists';
 let user_table = 'user';
+let backups_table = 'backups';
 
 // create table on start app
-const dbPromise = openDb(db, 5, upgradeDB => {
+const dbPromise = openDb(db, 6, upgradeDB => {
     // if updating new DB
     if (upgradeDB.oldVersion === 0) {
         upgradeDB.createObjectStore(list_table);
         upgradeDB.createObjectStore(user_table, {keyPath: "id", autoIncrement: true});
+        upgradeDB.createObjectStore(backups_table, {keyPath: "id", autoIncrement: true});
     }
     // if updating exist DB and don't know last version
     if (upgradeDB.oldVersion > 0) {
-        upgradeDB.createObjectStore(user_table, {keyPath: "id", autoIncrement: true});
+        upgradeDB.createObjectStore(backups_table, {keyPath: "id", autoIncrement: true});
     }
 });
 
@@ -27,10 +32,15 @@ const idbKeyval = {
     },
     async setUser(user) {
         const db = await dbPromise;
-
         const tx = db.transaction(user_table, 'readwrite');
         tx.objectStore(user_table).clear().then();
         tx.objectStore(user_table).put(user).then();
+    },
+    async setBackups(items) {
+        const db = await dbPromise;
+        const tx = db.transaction(backups_table, 'readwrite');
+        tx.objectStore(backups_table).clear().then();
+        tx.objectStore(backups_table).put(items).then();
     },
     async set(list_table, list_key, table, val) {
         const db = await dbPromise;
@@ -207,6 +217,32 @@ async function updateIDB(action, table, list_table) {
             await idbKeyval.setList(list_table, list_key, new_data);
             break;
         }
+        case 'RECOVER_LISTS': {
+            let data = JSON.parse(action.payload);
+            const list_table = 'lists';
+            await idbKeyval.clear(list_table);
+            // clear store
+            store.dispatch(removeLists());
+            Object.keys(data).forEach(async function(key) {
+                const list_key = Number(key);
+                // update store
+                store.dispatch(updateItems(data[list_key], list_key));
+                // get data from app store
+                let new_data = store.getState().lists[list_key];
+                // update IDB
+                await idbKeyval.deleteList(list_table, list_key);
+                await idbKeyval.setList(list_table, list_key, new_data);
+            });
+            break;
+        }
+        case 'REMOVE_LIST': {
+            const list_table = 'lists';
+            // update store
+            store.dispatch(removeList(Number(action.payload)));
+            // update idb
+            await idbKeyval.deleteList(list_table, Number(action.payload));
+            break;
+        }
         case 'DELETE_DB': {
             deleteDb(db).then();
             break;
@@ -214,6 +250,11 @@ async function updateIDB(action, table, list_table) {
         case 'SET_USER': {
             await idbKeyval.setUser(action.payload);
             store.dispatch(updateUser(action.payload));
+            break;
+        }
+        case 'SET_BACKUPS': {
+            await idbKeyval.setBackups(action.payload);
+            store.dispatch(updateBackups(action.payload));
             break;
         }
 
