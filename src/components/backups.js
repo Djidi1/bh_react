@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 import {withTranslation} from "react-i18next";
+import Moment from 'react-moment';
 
 import { withStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -160,10 +161,12 @@ class BackupsDialog extends React.Component {
 
 
     render() {
-        const { t, classes, backups, token } = this.props;
+        const { t, classes, backups, settings, token } = this.props;
         const { open, loading } = this.state;
 
         let items = backups.backups !== undefined ? backups.backups : [];
+        let item_auto = settings.backup !== undefined ? settings.backup : {};
+        console.log(item_auto);
         return (
             <div>
                 {token
@@ -221,7 +224,19 @@ class BackupsDialog extends React.Component {
                             </IconButton>
                         </Toolbar>
                     </AppBar>
+                    <List>
+                            <ListItem
+                                key={`backup-0`}
+                                button
+                                onClick={this.handleClickOpenConfirm({data: item_auto.backup})}>
+                                <ListItemIcon>
+                                    <HistoryIcon/>
+                                </ListItemIcon>
+                                <ListItemText primary={t('backups.auto_backup')} />
+                                <Moment format="YYYY-MM-DD HH:mm:ss">{item_auto.updated_at}</Moment>
 
+                            </ListItem>
+                    </List>
                     <div
                         className={classes.container}>
                         <Button
@@ -262,6 +277,7 @@ const mapStateToProps = store => {
         token: store.user.token,
         lists: store.lists,
         backups: store.backups,
+        settings: store.settings,
         backend_url: store.app.backend_url,
     }
 };

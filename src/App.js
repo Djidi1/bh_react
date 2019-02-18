@@ -39,7 +39,7 @@ const theme = createMuiTheme({
 });
 
 async function getAllData(props, lists) {
-    openDb('bh_db', 6, upgradeDB => {
+    openDb('bh_db', 7, upgradeDB => {
         // if updating new DB
         if (upgradeDB.oldVersion === 0) {
             upgradeDB.createObjectStore(lists);
@@ -48,7 +48,7 @@ async function getAllData(props, lists) {
         }
         // if updating exist DB and don't know last version
         if (upgradeDB.oldVersion > 0) {
-            upgradeDB.createObjectStore('backups', {keyPath: "id", autoIncrement: true});
+            upgradeDB.createObjectStore('settings', {keyPath: "id", autoIncrement: true});
         }
     }).then(async db => {
         let tx = db.transaction(lists, 'readonly');
@@ -103,6 +103,7 @@ class App extends Component {
     state = {
         loading: true,
         sync: false,
+        error: false
     };
 
     componentDidMount() {
@@ -116,20 +117,18 @@ class App extends Component {
                 this.setState({items: items, done_items: done_items});
             }
 
-            setTimeout(this.handleAutoSave(), 1000);
+            setTimeout(() => this.handleAutoSave(), 5000);
         })()
     }
 
     handleAutoSave = () => {
         const {backend_url, token, lists} = this.props;
-        console.log(backend_url, token, lists);
         if (token) {
             this.setState({sync: true});
             autoSaveBackup(backend_url, token, lists).then(response => response.json())
                 .then(json => {
                     if (json.status !== "error") {
-                        console.log(json);
-                        // updateIDB({type: 'SET_USER', payload: user}).then();
+                        updateIDB({type: 'SET_AUTO_SAVE', payload: {updated_at: new Date(), backup: lists}}).then();
                     } else {
                         this.setState({error: json});
                     }
@@ -174,7 +173,7 @@ class App extends Component {
 // приклеиваем данные из store
 const mapStateToProps = store => {
     // console.log(React.version);
-    // console.log(store);
+    console.log(store);
     return {
         app_bg: store.app.app_bg,
         token: store.user.token,

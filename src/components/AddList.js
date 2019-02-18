@@ -40,7 +40,9 @@ const styles = theme => ({
         },
         color: '#FFFFFF',
     },
-    cssFocused: {},
+    cssFocused: {
+        caretColor: '#FFFFFF'
+    },
     cssDisabled: {},
     notchedOutline: {
         borderColor: '#FFFFFF !important',

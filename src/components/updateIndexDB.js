@@ -5,14 +5,16 @@ import updateUser from "../actions/updateUser";
 import removeList from "../actions/removeList";
 import removeLists from "../actions/removeLists";
 import updateBackups from "../actions/updateBackups";
+import updateSettings from "../actions/updateSettings";
 
 let db = 'bh_db';
 let list_table = 'lists';
 let user_table = 'user';
 let backups_table = 'backups';
+let settings_table = 'settings';
 
 // create table on start app
-const dbPromise = openDb(db, 6, upgradeDB => {
+const dbPromise = openDb(db, 7, upgradeDB => {
     // if updating new DB
     if (upgradeDB.oldVersion === 0) {
         upgradeDB.createObjectStore(list_table);
@@ -21,7 +23,7 @@ const dbPromise = openDb(db, 6, upgradeDB => {
     }
     // if updating exist DB and don't know last version
     if (upgradeDB.oldVersion > 0) {
-        upgradeDB.createObjectStore(backups_table, {keyPath: "id", autoIncrement: true});
+        upgradeDB.createObjectStore(settings_table, {keyPath: "id", autoIncrement: true});
     }
 });
 
@@ -41,6 +43,12 @@ const idbKeyval = {
         const tx = db.transaction(backups_table, 'readwrite');
         tx.objectStore(backups_table).clear().then();
         tx.objectStore(backups_table).put(items).then();
+    },
+    async setSettings(items) {
+        const db = await dbPromise;
+        const tx = db.transaction(settings_table, 'readwrite');
+        tx.objectStore(settings_table).clear().then();
+        tx.objectStore(settings_table).put(items).then();
     },
     async set(list_table, list_key, table, val) {
         const db = await dbPromise;
@@ -255,6 +263,11 @@ async function updateIDB(action, table, list_table) {
         case 'SET_BACKUPS': {
             await idbKeyval.setBackups(action.payload);
             store.dispatch(updateBackups(action.payload));
+            break;
+        }
+        case 'SET_AUTO_SAVE': {
+            await idbKeyval.setSettings(action.payload);
+            store.dispatch(updateSettings(action.payload));
             break;
         }
 
