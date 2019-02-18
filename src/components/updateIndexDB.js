@@ -136,8 +136,8 @@ async function updateIDB(action, table, list_table) {
         case 'SET_LIST': {
             let list_table = 'lists';
             let list_keys = await idbKeyval.getAllKeys(list_table);
-            let list_key = Math.max(...list_keys) + 1;
-            console.log(list_key, action);
+            let list_key_exist = Math.max(...list_keys);
+            let list_key = list_key_exist > 0 ? list_key_exist + 1 : 1;
             await idbKeyval.setList(list_table, list_key, action.payload);
             syncStoreIdb(list_table, list_key).then();
             break;

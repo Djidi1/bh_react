@@ -1,5 +1,6 @@
 import React from 'react';
 import {withTranslation} from "react-i18next";
+
 import updateIDB from './updateIndexDB';
 
 import classNames from 'classnames';
@@ -70,9 +71,9 @@ class AddList extends React.Component {
         new_list.title = this.state.new_list;
         new_list.items = [];
         new_list.done_items = [];
-        // reset value
-        this.setState({ new_item: '' });
         updateIDB({type: 'SET_LIST', payload: new_list}).then();
+        // reset value
+        this.setState({ new_list: '' });
     };
     handleKeyPress = (event) => {
         if(event.key === 'Enter' && this.state.new_item !== ''){
@@ -98,7 +99,7 @@ class AddList extends React.Component {
                     }}
                     variant="outlined"
                     label={t('lists.create_list')}
-                    value={this.state.new_item}
+                    value={this.state.new_list}
                     onChange={this.handleChange('new_list')}
                     onKeyPress={this.handleKeyPress}
                     fullWidth
@@ -133,7 +134,6 @@ class AddList extends React.Component {
 AddList.propTypes = {
     classes: PropTypes.object.isRequired,
 };
-
 
 
 export default withStyles(styles)(withTranslation()(AddList));

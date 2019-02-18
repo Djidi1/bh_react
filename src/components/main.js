@@ -86,7 +86,7 @@ class ButtonAppBar extends React.Component {
 
     render() {
         const {t, classes, list_key, lists} = this.props;
-        let list_title = lists[list_key].title;
+        let list_title = lists[list_key] ? lists[list_key].title : '-';
 
         const sideList = (
             <div className={classes.list}>
