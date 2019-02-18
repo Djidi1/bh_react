@@ -166,7 +166,6 @@ class BackupsDialog extends React.Component {
 
         let items = backups.backups !== undefined ? backups.backups : [];
         let item_auto = settings.backup !== undefined ? settings.backup : {};
-        console.log(item_auto);
         return (
             <div>
                 {token
@@ -228,12 +227,15 @@ class BackupsDialog extends React.Component {
                             <ListItem
                                 key={`backup-0`}
                                 button
-                                onClick={this.handleClickOpenConfirm({data: item_auto.backup})}>
+                                onClick={this.handleClickOpenConfirm({data: JSON.stringify(item_auto.backup)})}>
                                 <ListItemIcon>
                                     <HistoryIcon/>
                                 </ListItemIcon>
-                                <ListItemText primary={t('backups.auto_backup')} />
-                                <Moment format="YYYY-MM-DD HH:mm:ss">{item_auto.updated_at}</Moment>
+                                <ListItemText
+                                    primary={t('backups.auto_backup')}
+                                    secondary={<Moment format="YYYY-MM-DD HH:mm:ss">{item_auto.updated_at}</Moment>}
+                                />
+
 
                             </ListItem>
                     </List>
@@ -258,7 +260,7 @@ class BackupsDialog extends React.Component {
                                 <ListItemIcon>
                                     <HistoryIcon/>
                                 </ListItemIcon>
-                                <ListItemText primary={t('backups.backup')} secondary={item.created_at}/>
+                                <ListItemText primary={t('backups.backup')} secondary={item.updated_at}/>
                             </ListItem>
                         ))}
                     </List>

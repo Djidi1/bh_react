@@ -30,6 +30,7 @@
     },
     "backups": {
         "title": "Backups",
+        "auto_backup": "Auto Backup Copy",
         "backup": "Backup",
         "save_now": "Create backup now",
         "are_you_sore": "Are you sore?",

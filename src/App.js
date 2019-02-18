@@ -117,7 +117,7 @@ class App extends Component {
                 this.setState({items: items, done_items: done_items});
             }
 
-            setTimeout(() => this.handleAutoSave(), 5000);
+            setInterval(() => this.handleAutoSave(), 10*60*1000);
         })()
     }
 
@@ -173,7 +173,7 @@ class App extends Component {
 // приклеиваем данные из store
 const mapStateToProps = store => {
     // console.log(React.version);
-    console.log(store);
+    // console.log(store);
     return {
         app_bg: store.app.app_bg,
         token: store.user.token,
