@@ -160,18 +160,22 @@ class BackupsDialog extends React.Component {
 
 
     render() {
-        const { t, classes, backups } = this.props;
+        const { t, classes, backups, token } = this.props;
         const { open, loading } = this.state;
 
         let items = backups.backups !== undefined ? backups.backups : [];
         return (
             <div>
-                <ListItem button onClick={this.handleClickOpenBackups}>
-                    <ListItemIcon>
-                        <BackupIcon/>
-                    </ListItemIcon>
-                    <ListItemText primary= {t("backups.title")}/>
-                </ListItem>
+                {token
+                    ?
+                    <ListItem button onClick={this.handleClickOpenBackups}>
+                        <ListItemIcon>
+                            <BackupIcon/>
+                        </ListItemIcon>
+                        <ListItemText primary={t("backups.title")}/>
+                    </ListItem>
+                    : ''
+                }
                 <Dialog
                     fullWidth
                     open={this.state.recover_open}

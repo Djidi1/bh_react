@@ -59,6 +59,10 @@ const styles = () => ({
         left: '4px',
         width: 52
     },
+    center_buttons: {
+        textAlign: 'center',
+        marginTop: 16,
+    },
 });
 
 
@@ -141,11 +145,17 @@ class ListsPage extends React.Component {
                             onKeyPress={this.handleKeyPress}
                             fullWidth
                         />
+                        <div className={classes.center_buttons}>
+                            <Button
+                                variant="contained"
+                                onClick={this.handleClickOpenConfirm}
+                                color="inherit"
+                            >
+                                {t('lists.remove')}
+                            </Button>
+                        </div>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleClickOpenConfirm} color="inherit">
-                            {t('lists.remove')}
-                        </Button>
                         <Button onClick={this.handleClose} color="secondary">
                             {t('lists.cancel')}
                         </Button>

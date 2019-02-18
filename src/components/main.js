@@ -91,7 +91,7 @@ class ButtonAppBar extends React.Component {
         const sideList = (
             <div className={classes.list}>
                 <List>
-                    <SignInDialog/>
+                    <Divider/>
                     <div
                         tabIndex={0}
                         role="button"
@@ -100,6 +100,8 @@ class ButtonAppBar extends React.Component {
                     >
                         <ListItemLink title={t('menu.lists')} to='/lists/' icon={<ListIcon/>}/>
                     </div>
+                    <Divider/>
+                    <SignInDialog/>
                     <BackupsDialog/>
                     <SettingsDialog/>
                 </List>
