@@ -86,9 +86,23 @@ async function getAllData(props, lists) {
     })
 }
 
+
+async function autoSaveBackup(backend_url, token, lists) {
+    return await fetch(backend_url + '/api/backup_auto_save', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(lists)
+    });
+}
+
 class App extends Component {
     state = {
         loading: true,
+        sync: false,
     };
 
     componentDidMount() {
@@ -101,10 +115,28 @@ class App extends Component {
                 const done_items = lists.done_items || [];
                 this.setState({items: items, done_items: done_items});
             }
+
+            setTimeout(this.handleAutoSave(), 1000);
         })()
     }
 
-
+    handleAutoSave = () => {
+        const {backend_url, token, lists} = this.props;
+        console.log(backend_url, token, lists);
+        if (token) {
+            this.setState({sync: true});
+            autoSaveBackup(backend_url, token, lists).then(response => response.json())
+                .then(json => {
+                    if (json.status !== "error") {
+                        console.log(json);
+                        // updateIDB({type: 'SET_USER', payload: user}).then();
+                    } else {
+                        this.setState({error: json});
+                    }
+                    this.setState({sync: false});
+                })
+        }
+    };
 
     render() {
         const { loading } = this.state;
@@ -145,6 +177,9 @@ const mapStateToProps = store => {
     // console.log(store);
     return {
         app_bg: store.app.app_bg,
+        token: store.user.token,
+        lists: store.lists,
+        backend_url: store.app.backend_url,
     }
 };
 
