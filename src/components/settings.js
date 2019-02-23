@@ -12,7 +12,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@material-ui/icons/ArrowBack';
 import Slide from '@material-ui/core/Slide';
 import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -26,6 +26,10 @@ import ListSubheader from "@material-ui/core/ListSubheader/ListSubheader";
 const styles = {
     appBar: {
         position: 'relative',
+    },
+    menuButton: {
+        marginLeft: -12,
+        marginRight: 20,
     },
     flex: {
         flex: 1,
@@ -102,7 +106,7 @@ class SettingsDialog extends React.Component {
                 >
                     <AppBar className={classes.appBar}>
                         <Toolbar>
-                            <IconButton color="inherit" onClick={this.handleClose} aria-label="Close">
+                            <IconButton color="inherit" onClick={this.handleClose} className={classes.menuButton} aria-label="Close">
                                 <CloseIcon />
                             </IconButton>
                             <Typography variant="h6" color="inherit" className={classes.flex}>

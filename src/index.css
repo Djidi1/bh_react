@@ -23,17 +23,10 @@ html, body {
   min-height: 100%;
 }
 
-input {
-  caret-color: #eafff6;
-}
-
 .photo-background {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-  background-attachment: fixed;
   min-height: 100vh;
-  background-image: url("./img/background.jpg");
+  background: url("./img/background.jpg") no-repeat fixed center 50px;
+  background-size: cover;
 }
 
 /* class for drag'n'drop style */

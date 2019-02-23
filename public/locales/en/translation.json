@@ -16,7 +16,8 @@
         "create_list": "Add new list",
         "list_title": "Title",
         "list_edit": "Edit list",
-        "remove": "Remove",
+        "no_data": "List is empty",
+        "remove": "Remove list",
         "apply": "Apply",
         "cancel": "Cancel",
         "are_you_sore": "Are you sore?",
@@ -32,11 +33,14 @@
         "title": "Backups",
         "auto_backup": "Auto Backup Copy",
         "backup": "Backup",
+        "no_auto_backup": "didn't created",
         "save_now": "Create backup now",
-        "are_you_sore": "Are you sore?",
-        "are_you_sore_text": "All data in the app will be replaced.",
-        "yes": "Yes",
-        "no": "No"
+        "are_you_sore_recover": "Please confirm recover data",
+        "are_you_sore_text": "All lists will be replaced",
+        "are_you_sore_delete": "Please confirm delete that backup",
+        "are_you_sore_delete_text": "All lists in that backup will be removed",
+        "yes": "Confirm",
+        "no": "Cancel"
     },
     "sign_in": {
         "title": "Sign in to Just To-Do",

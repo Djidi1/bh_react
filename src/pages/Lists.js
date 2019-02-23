@@ -7,19 +7,13 @@ import {withStyles} from '@material-ui/core/styles';
 import List from "@material-ui/core/List/List";
 import ListItem from "@material-ui/core/ListItem/ListItem";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
-import Button from "@material-ui/core/Button/Button";
-import Dialog from "@material-ui/core/Dialog/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent/DialogContent";
-import TextField from "@material-ui/core/TextField/TextField";
-import DialogActions from "@material-ui/core/DialogActions/DialogActions";
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
 import setListKey from "../actions/setListKey";
 import AddList from "../components/AddList";
-import updateIDB from "../components/updateIndexDB";
+import EditList from "../components/dialogs/editList";
 import Typography from "@material-ui/core/Typography/Typography";
 
 const styles = () => ({
@@ -29,31 +23,38 @@ const styles = () => ({
     child: {
         position: 'relative',
         backgroundColor: '#fff !important',
-        margin: 3,
+        margin: '3px 5px',
         borderRadius: 6,
-        opacity: 0.95,
+        opacity: 0.9,
         padding: '0 0 0 52px',
-        width: 'calc(100vw - 8px)',
+        width: 'calc(100vw - 10px)',
         minHeight: 46,
     },
     item: {
         fontWeight: '300',
         fontSize: '1rem !important',
-        paddingTop: '3px'
+        paddingTop: 5,
     },
     inline: {
         fontWeight: '300',
         textOverflow: 'ellipsis',
         overflow: 'hidden',
-        width: '240px',
+        width: '90%',
         whiteSpace: 'nowrap',
-        color: '#999',
+        color: '#999999',
         fontSize: 'small',
+        marginTop: -4,
     },
     summary: {
         fontSize: '0.8rem !important',
         padding: '12px',
         color: '#7e57c2',
+    },
+    summary_done: {
+        color: '#999999'
+    },
+    black: {
+        color: '#666666'
     },
     edit_btn: {
         left: '4px',
@@ -69,123 +70,32 @@ const styles = () => ({
 class ListsPage extends React.Component {
     state = {
         open: false,
-        remove_open: false,
         loading: false,
         edit_item: {},
         list_key: 0,
+    };
+
+    handleCloseEdit = (open) => {
+        this.setState({open: open});
     };
 
     handleClickOpen = (item, index) => () => {
         this.setState({open: true, edit_item: {...item}, list_key: index});
     };
 
-    handleSave = () => {
-        this.setState({open: false});
-        updateIDB({
-            type: 'SET_LIST_TITLE',
-            payload: this.state.edit_item,
-            list_key: this.state.list_key
-        }, '', 'lists').then();
-    };
-    handleClose = () => {
-        this.setState({open: false});
-    };
-    handleChange = () => event => {
-        let edit_item = this.state.edit_item;
-        edit_item.title = event.target.value;
-        this.setState({edit_item: edit_item});
-    };
-    handleKeyPress = (event) => {
-        if (event.key === 'Enter' && this.state.edit_item.title !== '') {
-            this.handleSave();
-        }
-    };
-
     handleToggle = (index) => () => {
         this.props.setListKey(index);
     };
 
-    handleConfirmDelete = () => {
-        this.setState({ loading: true });
-        const self = this;
-        updateIDB({type: 'REMOVE_LIST', payload: this.state.list_key}).then(function () {
-            self.setState({ loading: false, remove_open: false, open: false });
-        });
-    };
-
-    handleConfirmClose = () => {
-        this.setState({ remove_open: false });
-    };
-
-    handleClickOpenConfirm = () => {
-        this.setState({ remove_open: true});
-    };
 
     render() {
         const {t, classes, lists} = this.props;
+        const {open, edit_item, list_key} = this.state;
 
         return (
             <div>
                 <AddList/>
-                <Dialog
-                    fullWidth
-                    open={this.state.open}
-                    onClose={this.handleClose}
-                    aria-labelledby="form-dialog-title"
-                >
-                    <DialogTitle id="form-dialog-title">{t('lists.list_edit')}</DialogTitle>
-                    <DialogContent>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            label={t('lists.list_title')}
-                            type="text"
-                            value={this.state.edit_item.title}
-                            onChange={this.handleChange('edit_item')}
-                            onKeyPress={this.handleKeyPress}
-                            fullWidth
-                        />
-                        <div className={classes.center_buttons}>
-                            <Button
-                                variant="contained"
-                                onClick={this.handleClickOpenConfirm}
-                                color="inherit"
-                            >
-                                {t('lists.remove')}
-                            </Button>
-                        </div>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleClose} color="secondary">
-                            {t('lists.cancel')}
-                        </Button>
-                        <Button onClick={this.handleSave} color="primary">
-                            {t('lists.apply')}
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-
-                <Dialog
-                    fullWidth
-                    open={this.state.remove_open}
-                    onClose={this.handleConfirmClose}
-                    aria-labelledby="form-dialog-title"
-                >
-                    <DialogTitle id="form-dialog-delete_list">{t('lists.are_you_sore')}</DialogTitle>
-                    <DialogContent>
-                        <Typography>
-                            {t('lists.are_you_sore_text')}
-                        </Typography>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleConfirmClose} color="secondary">
-                            {t('lists.no')}
-                        </Button>
-                        <Button onClick={this.handleConfirmDelete} color="primary">
-                            {t('lists.yes')}
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                <EditList visible={open} onCloseEdit={this.handleCloseEdit} editItem={edit_item} listKey={Number(list_key)}/>
 
                 <List className={classes.root}>
                     {Object.keys(lists).map((index) => (
@@ -208,13 +118,18 @@ class ListsPage extends React.Component {
                                 secondary={
                                     <React.Fragment>
                                         <Typography component="span" className={classes.inline} color="textPrimary">
-                                            {lists[index].items.map(e => e.title).join(", ")}
+                                            {lists[index].items.length ?
+                                                lists[index].items.map(e => e.title).join(", ") :
+                                                t('lists.no_data')
+                                            }
                                         </Typography>
                                     </React.Fragment>
                                 }
                             />
                             <ListItemSecondaryAction className={classes.summary}>
-                                {lists[index].items.length + ' / ' + lists[index].done_items.length}
+                                {lists[index].items.length}
+                                <span className={classes.black}> / </span>
+                                <span className={classes.summary_done}>{lists[index].done_items.length}</span>
                             </ListItemSecondaryAction>
 
                             <ListItemSecondaryAction className={classes.edit_btn}>
@@ -233,10 +148,7 @@ class ListsPage extends React.Component {
 // приклеиваем данные из store
 const mapStateToProps = store => {
     return {
-        user: store.user,
-        app_name: store.app.app_name,
         lists: store.lists,
-        list_key: store.app.list_key,
     }
 };
 

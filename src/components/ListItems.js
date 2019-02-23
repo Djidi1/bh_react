@@ -8,24 +8,19 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
+import Switch from '@material-ui/core/Switch';
+import Slide from "@material-ui/core/Slide/Slide";
+import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import DragIndicator from '@material-ui/icons/DragIndicator';
 
 import SwipeToDelete from '../swipe_js/js/main';
 import '../swipe_js/css/main.scss';
 
-
 import {SortableContainer, SortableElement, arrayMove, SortableHandle} from 'react-sortable-hoc';
 
-import Switch from '@material-ui/core/Switch';
 import updateIDB from "./updateIndexDB";
-import Slide from "@material-ui/core/Slide/Slide";
-import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
-import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent/DialogContent";
-import TextField from "@material-ui/core/TextField/TextField";
-import DialogActions from "@material-ui/core/DialogActions/DialogActions";
-import Button from "@material-ui/core/Button/Button";
-import Dialog from "@material-ui/core/Dialog/Dialog";
+
+import EditItem from "./dialogs/editItem";
 
 const styles = () => ({
     root: {
@@ -38,6 +33,9 @@ const styles = () => ({
     textField: {
         margin: '16px 8px',
         width: 'calc(100% - 30px)'
+    },
+    mainBlock:{
+        margin: '10px 0',
     },
     listItem: {
         margin: '2px 8px',
@@ -62,14 +60,17 @@ const styles = () => ({
         textDecoration: 'line-through',
         opacity: 0.5,
     },
-
     item: {
         fontWeight: '300',
-        fontSize: '1rem !important'
+        fontSize: '1rem !important',
+        overflowWrap: 'break-word',
+    },
+    dragIcon: {
+        height: 24,
     }
 });
 
-const DragHandle = SortableHandle(() => <span><DragIndicator color={"action"}/></span>);
+const DragHandle = SortableHandle(({classes}) => (<span className={classes.dragIcon}><DragIndicator color={"action"}/></span>));
 
 const SortableItem = SortableElement(({value, index, classes, t, removeItem, checkItem}) => (
         <ListItemComponent index={index}
@@ -160,56 +161,16 @@ class ListItemComponent extends Component {
         updateIDB({type: 'REMOVE_ITEM', payload: item}, table, 'lists').then();
     };
 
-    handleSave = () => {
-        this.setState({open: false});
-        updateIDB({type: 'RENAME_ITEM', payload: this.state.edit_item}, '', 'lists').then();
-    };
-    handleClose = () => {
-        this.setState({open: false});
-    };
-    handleChange = () => event => {
-        let edit_item = this.state.edit_item;
-        edit_item.title = event.target.value;
-        this.setState({edit_item: edit_item});
-    };
-    handleKeyPressItem = (event) => {
-        if (event.key === 'Enter' && this.state.edit_item.title !== '') {
-            this.handleSave();
-        }
+    handleCloseEdit = (open) => {
+        this.setState({open: open});
     };
 
     render() {
-        const { t, classes, value } = this.props;
-        return <div>
+        const { classes, value } = this.props;
+        const {open, edit_item, list_key} = this.state;
 
-            <Dialog
-                fullWidth
-                open={this.state.open}
-                onClose={this.handleClose}
-                aria-labelledby="form-dialog-title"
-            >
-                <DialogTitle id="form-dialog-title">{t('lists.list_title')}</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        label={t('lists.list_title')}
-                        type="text"
-                        value={this.state.edit_item.title}
-                        onChange={this.handleChange('edit_item')}
-                        onKeyPress={this.handleKeyPressItem}
-                        fullWidth
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={this.handleClose} color="secondary">
-                        {t('lists.cancel')}
-                    </Button>
-                    <Button onClick={this.handleSave} color="primary">
-                        {t('lists.apply')}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+        return <div>
+            <EditItem visible={open} onCloseEdit={this.handleCloseEdit} editItem={edit_item} listKey={Number(list_key)}/>
 
             <SwipeToDelete
             key={value.key}
@@ -237,7 +198,7 @@ class ListItemComponent extends Component {
                                   primary: classes.item,
                               }}
                 />
-                <DragHandle />
+                <DragHandle classes={classes}/>
             </ListItem>
         </SwipeToDelete>
         </div>;
@@ -277,7 +238,7 @@ class ListItems extends React.Component {
         }
 
         return (
-            <div>
+            <div className={classes.mainBlock}>
                 <SortableComponent
                     items={items}
                     list_key={list_key}
@@ -285,28 +246,33 @@ class ListItems extends React.Component {
                     t={t}
                     table='items'
                 />
-                <div className={classes.showDone}>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={fade_checked}
-                                onChange={this.handleChange}
-                                color="secondary"
+                {done_items.length ?
+                    <div>
+                        <div className={classes.showDone}>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={fade_checked}
+                                        onChange={this.handleChange}
+                                        color="secondary"
+                                    />
+                                }
+                                label={t('list.show_done')}
+                                classes={{label: classes.toggleLabel, root: classes.toggleRoot}}
                             />
-                        }
-                        label={t('list.show_done')}
-                        classes = {{ label: classes.toggleLabel, root: classes.toggleRoot }}
-                    />
-                </div>
-                <Slide direction="up" mountOnEnter unmountOnExit in={fade_checked}>
-                    <SortableComponent
+                        </div>
+                        < Slide direction = "up" mountOnEnter unmountOnExit in={fade_checked}>
+                        <SortableComponent
                         items={done_items}
                         list_key={list_key}
                         classes={classes}
                         t={t}
                         table='done_items'
-                    />
-                </Slide>
+                        />
+                        </Slide>
+                    </div>
+                    : ''
+                }
             </div>
         );
     }

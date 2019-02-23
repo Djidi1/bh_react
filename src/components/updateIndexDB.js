@@ -198,7 +198,6 @@ async function updateIDB(action, table, list_table) {
             let all_lists = await idbKeyval.getAllFromList(list_table, list_key);
             // 2. prepare data for storage
             let result_store = all_lists[0];
-            console.log(result_store, action.payload);
             // 3. update item in store
             if (action.payload.checked) {
                 result_store['done_items'][action.payload.key] = action.payload;
