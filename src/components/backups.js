@@ -145,7 +145,7 @@ class BackupsDialog extends React.Component {
         saveBackups(backend_url, token, lists).then(response => response.json())
             .then(json => {
                 if (json.status !== "error") {
-                    console.log(json);
+                    // console.log(json);
                 }else{
                     this.setState({ error: json });
                 }
@@ -164,7 +164,7 @@ class BackupsDialog extends React.Component {
         deleteBackup(backend_url, token, this.state.delete_item).then(response => response.json())
             .then(json => {
                 if (json.status !== "error") {
-                    console.log(json);
+                    // console.log(json);
                 }else{
                     this.setState({ error: json });
                 }

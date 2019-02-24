@@ -73,7 +73,6 @@ class SignOnDialog extends React.Component {
         const {username, email, password} = this.state;
         sign_on(backend_url, username, email, password).then(response => response.json())
             .then(json => {
-                console.log(json);
                 if (json.errors) {
                     this.setState({ error: json.message });
                 }else{

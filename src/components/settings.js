@@ -84,9 +84,7 @@ class SettingsDialog extends React.Component {
 
     handleChangeLang = (lang) => {
         this.setState({ language: lang });
-        this.props.i18n.changeLanguage(lang).then(function (res) {
-            console.log(res);
-        });
+        this.props.i18n.changeLanguage(lang).then();
     };
 
     render() {

@@ -90,7 +90,6 @@ class SignInDialog extends React.Component {
         const {email, password} = this.state;
         sign_in(backend_url, email, password).then(response => response.json())
             .then(json => {
-                console.log(json);
                 if (json.status !== "error") {
                     let user = json.user;
                     user['token'] = json.token;
