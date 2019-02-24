@@ -16,7 +16,7 @@ import CloseIcon from '@material-ui/icons/ArrowBack';
 import Slide from '@material-ui/core/Slide';
 import ListItemIcon from "@material-ui/core/ListItemIcon/ListItemIcon";
 import SettingsIcon from '@material-ui/icons/Settings';
-import DeleteIcon from "@material-ui/icons/DeleteForever";
+// import DeleteIcon from "@material-ui/icons/DeleteForever";
 import FormControlLabel from "@material-ui/core/FormControlLabel/FormControlLabel";
 import Switch from "@material-ui/core/Switch/Switch";
 import deleteIndexedDB from "../actions/deleteIndexedDB";
@@ -84,7 +84,7 @@ class SettingsDialog extends React.Component {
 
     handleChangeLang = (lang) => {
         this.setState({ language: lang });
-        this.props.i18n.changeLanguage(lang);
+        this.props.i18n.changeLanguage(lang).then();
     };
 
     render() {
@@ -146,13 +146,13 @@ class SettingsDialog extends React.Component {
                             classes = {{ root: classes.toggleItem, label: classes.toggleLabel }}
                         />
                         <Divider />
-                        <ListItem button onClick={() => this.props.deleteIndexedDBAction()}>
+                        {/*<ListItem button onClick={() => this.props.deleteIndexedDBAction()}>
                             <ListItemIcon>
                                 <DeleteIcon/>
                             </ListItemIcon>
                             <ListItemText primary={t('menu.clear_db')}/>
                         </ListItem>
-                        <Divider />
+                        <Divider />*/}
                     </List>
                 </Dialog>
             </div>

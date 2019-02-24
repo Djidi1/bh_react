@@ -100,6 +100,7 @@ class SignOnDialog extends React.Component {
                     open={open_login}
                     onClose={this.handleClose}
                     aria-labelledby="form-dialog-title"
+                    scroll={'body'}
                 >
                     <Avatar className="app-sign-in-logo" />
 

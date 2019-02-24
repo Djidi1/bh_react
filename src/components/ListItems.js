@@ -35,7 +35,7 @@ const styles = () => ({
         width: 'calc(100% - 30px)'
     },
     mainBlock:{
-        margin: '10px 0',
+        marginTop: '10px',
     },
     listItem: {
         margin: '2px 8px',
