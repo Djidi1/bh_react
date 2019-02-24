@@ -129,7 +129,6 @@ class editListDialog extends React.Component {
                     </AppBar>
                     <DialogContent>
                         <TextField
-                            autoFocus
                             margin="dense"
                             label={t('lists.list_title')}
                             type="text"

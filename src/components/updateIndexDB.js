@@ -20,10 +20,10 @@ const dbPromise = openDb(db, 7, upgradeDB => {
         upgradeDB.createObjectStore(list_table);
         upgradeDB.createObjectStore(user_table, {keyPath: "id", autoIncrement: true});
         upgradeDB.createObjectStore(backups_table, {keyPath: "id", autoIncrement: true});
+        upgradeDB.createObjectStore(settings_table, {keyPath: "id", autoIncrement: true});
     }
     // if updating exist DB and don't know last version
     if (upgradeDB.oldVersion > 0) {
-        upgradeDB.createObjectStore(settings_table, {keyPath: "id", autoIncrement: true});
     }
 });
 

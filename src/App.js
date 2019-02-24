@@ -45,10 +45,10 @@ async function getAllData(props, lists) {
             upgradeDB.createObjectStore(lists);
             upgradeDB.createObjectStore('user', {keyPath: "id", autoIncrement: true});
             upgradeDB.createObjectStore('backups', {keyPath: "id", autoIncrement: true});
+            upgradeDB.createObjectStore('settings', {keyPath: "id", autoIncrement: true});
         }
         // if updating exist DB and don't know last version
         if (upgradeDB.oldVersion > 0) {
-            upgradeDB.createObjectStore('settings', {keyPath: "id", autoIncrement: true});
         }
     }).then(async db => {
         let tx = db.transaction(lists, 'readonly');
@@ -71,6 +71,7 @@ async function getAllData(props, lists) {
             };
             props.writeItemsAction(result_store, list_key);
         });
+
         // get User from store
         store = db.transaction('user', 'readonly').objectStore('user');
         store.getAll()
