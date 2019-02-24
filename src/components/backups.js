@@ -348,7 +348,6 @@ BackupsDialog.propTypes = {
 };
 
 const mapStateToProps = store => {
-    console.log(store);
     return {
         token: store.user.token,
         lists: store.lists,

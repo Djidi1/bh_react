@@ -30,7 +30,7 @@ i18n
             loadPath: './locales/{{lng}}/{{ns}}.json'
         },
         load: 'languageOnly',
-        whitelist: ['de', 'en'],
+        whitelist: ['ru', 'en'],
     });
 
 
