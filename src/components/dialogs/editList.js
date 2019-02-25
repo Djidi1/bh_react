@@ -9,10 +9,7 @@ import IconButton from "@material-ui/core/IconButton/IconButton";
 import Typography from "@material-ui/core/Typography/Typography";
 import DialogContent from "@material-ui/core/DialogContent/DialogContent";
 import TextField from "@material-ui/core/TextField/TextField";
-import Button from "@material-ui/core/Button/Button";
 import Dialog from "@material-ui/core/Dialog/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
-import DialogActions from "@material-ui/core/DialogActions/DialogActions";
 import CloseIcon from "@material-ui/icons/ArrowBack";
 import DoneIcon from '@material-ui/icons/Done';
 import Slide from "@material-ui/core/Slide/Slide";
@@ -42,7 +39,6 @@ class editListDialog extends React.Component {
         open: false,
         edit_item: this.props.editItem,
         list_key: this.props.listKey,
-        remove_open: false,
         loading: false,
     };
 
@@ -84,26 +80,9 @@ class editListDialog extends React.Component {
         }
     };
 
-    handleConfirmDelete = () => {
-        this.setState({loading: true});
-        const self = this;
-        updateIDB({type: 'REMOVE_LIST', payload: this.state.list_key}).then(function () {
-            self.setState({loading: false, remove_open: false, open: false});
-            self.props.onCloseEdit(false);
-        });
-    };
-
-    handleConfirmClose = () => {
-        this.setState({remove_open: false});
-    };
-
-    handleClickOpenConfirm = () => {
-        this.setState({remove_open: true});
-    };
-
     render() {
         const {t, classes} = this.props;
-        const {open, edit_item, remove_open} = this.state;
+        const {open, edit_item} = this.state;
 
         return (
             <div>
@@ -137,37 +116,7 @@ class editListDialog extends React.Component {
                             onKeyPress={this.handleKeyPress}
                             fullWidth
                         />
-                        <div className={classes.center_buttons}>
-                            <Button
-                                onClick={this.handleClickOpenConfirm}
-                                color="secondary"
-                            >
-                                {t('lists.remove')}
-                            </Button>
-                        </div>
                     </DialogContent>
-                </Dialog>
-
-                <Dialog
-                    fullWidth
-                    open={remove_open}
-                    onClose={this.handleConfirmClose}
-                    aria-labelledby="form-dialog-title"
-                >
-                    <DialogTitle id="form-dialog-delete_list">{t('lists.are_you_sore')}</DialogTitle>
-                    <DialogContent>
-                        <Typography>
-                            {t('lists.are_you_sore_text')}
-                        </Typography>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleConfirmClose} color="secondary">
-                            {t('lists.no')}
-                        </Button>
-                        <Button onClick={this.handleConfirmDelete} color="primary">
-                            {t('lists.yes')}
-                        </Button>
-                    </DialogActions>
                 </Dialog>
 
             </div>);

@@ -20,8 +20,8 @@
         "remove": "Remove list",
         "apply": "Apply",
         "cancel": "Cancel",
-        "are_you_sore": "Are you sore?",
-        "are_you_sore_text": "List will be removed.",
+        "are_you_sore": "Do you want to delete list?",
+        "are_you_sore_text": "All data in that list will be removed, too.",
         "yes": "Yes",
         "no": "No"
     },

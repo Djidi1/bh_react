@@ -7,28 +7,22 @@ import {withStyles} from '@material-ui/core/styles';
 import List from "@material-ui/core/List/List";
 import ListItem from "@material-ui/core/ListItem/ListItem";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
-import EditIcon from '@material-ui/icons/Edit';
-import IconButton from "@material-ui/core/IconButton/IconButton";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 
 import setListKey from "../actions/setListKey";
 import AddList from "../components/AddList";
 import EditList from "../components/dialogs/editList";
+import DeleteList from "../components/dialogs/deleteList";
 import Typography from "@material-ui/core/Typography/Typography";
+import SwipeToDelete from "../swipe_js/js/main";
 
 const styles = () => ({
     root: {
         width: '100%',
+        opacity: 0.9,
     },
     child: {
-        position: 'relative',
-        backgroundColor: '#fff !important',
-        margin: '3px 5px',
-        borderRadius: 6,
-        opacity: 0.9,
-        padding: '0 0 0 52px',
-        width: 'calc(100vw - 10px)',
-        minHeight: 46,
+        padding: '0 0 4px 16px',
     },
     item: {
         fontWeight: '300',
@@ -64,23 +58,43 @@ const styles = () => ({
         textAlign: 'center',
         marginTop: 16,
     },
+
+    listItem: {
+        margin: '2px 8px',
+        borderRadius: '4px'
+    },
 });
 
 
 class ListsPage extends React.Component {
     state = {
         open: false,
+        open_remove: false,
         loading: false,
         edit_item: {},
         list_key: 0,
+        action: '',
+    };
+
+    handleSetAction = (action) => () => {
+        if (this.state.action !== action) {
+            this.setState({action: action});
+        }
+    };
+
+    handleEditItem = (item, index) => () => {
+        if (this.state.action === 'edit') {
+            this.setState({open: true, edit_item: {...item}, list_key: index});
+        }else if (this.state.action === 'delete') {
+            this.setState({open_remove: true, list_key: index});
+        }
     };
 
     handleCloseEdit = (open) => {
         this.setState({open: open});
     };
-
-    handleClickOpen = (item, index) => () => {
-        this.setState({open: true, edit_item: {...item}, list_key: index});
+    handleCloseDelete = (open) => {
+        this.setState({open_remove: open});
     };
 
     handleToggle = (index) => () => {
@@ -90,15 +104,24 @@ class ListsPage extends React.Component {
 
     render() {
         const {t, classes, lists} = this.props;
-        const {open, edit_item, list_key} = this.state;
+        const {open, open_remove, edit_item, list_key} = this.state;
 
         return (
             <div>
                 <AddList/>
                 <EditList visible={open} onCloseEdit={this.handleCloseEdit} editItem={edit_item} listKey={Number(list_key)}/>
+                <DeleteList visible={open_remove} onCloseDelete={this.handleCloseDelete} listKey={Number(list_key)}/>
 
                 <List className={classes.root}>
                     {Object.keys(lists).map((index) => (
+                        <SwipeToDelete
+                            key={index}
+                            className={'rc-swipeout ' + classes.listItem}
+                            onDelete={this.handleEditItem(lists[index], index)}
+                            onLeft={this.handleSetAction('delete')}
+                            onRight={this.handleSetAction('edit')}
+
+                        >
                         <ListItem
                             key={index}
                             role={undefined}
@@ -131,13 +154,8 @@ class ListsPage extends React.Component {
                                 <span className={classes.black}> / </span>
                                 <span className={classes.summary_done}>{lists[index].done_items.length}</span>
                             </ListItemSecondaryAction>
-
-                            <ListItemSecondaryAction className={classes.edit_btn}>
-                                <IconButton color="primary" onClick={this.handleClickOpen(lists[index], index)}>
-                                    <EditIcon/>
-                                </IconButton>
-                            </ListItemSecondaryAction>
                         </ListItem>
+                        </SwipeToDelete>
                     ))}
                 </List>
             </div>
