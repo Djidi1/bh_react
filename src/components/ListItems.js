@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {withTranslation} from "react-i18next";
 import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 
@@ -72,17 +71,16 @@ const styles = () => ({
 
 const DragHandle = SortableHandle(({classes}) => (<span className={classes.dragIcon}><DragIndicator color={"action"}/></span>));
 
-const SortableItem = SortableElement(({value, index, classes, t, removeItem, checkItem}) => (
+const SortableItem = SortableElement(({value, index, classes, removeItem, checkItem}) => (
         <ListItemComponent index={index}
                            value={value}
                            classes={classes}
-                           t={t}
                            removeItem={removeItem}
                            checkItem={checkItem}/>
     )
 );
 
-const SortableList = SortableContainer(({items,classes,t,removeItem,checkItem}) => {
+const SortableList = SortableContainer(({items,classes,removeItem,checkItem}) => {
     return (
         <List
             dense
@@ -93,7 +91,6 @@ const SortableList = SortableContainer(({items,classes,t,removeItem,checkItem}) 
                 <SortableItem
                     key={`item-${index}`}
                     classes={classes}
-                    t={t}
                     removeItem={removeItem}
                     checkItem={checkItem}
                     index={index}
@@ -115,7 +112,6 @@ class SortableComponent extends Component {
     render() {
         return <SortableList
             classes={this.props.classes}
-            t={this.props.t}
             items={this.props.items}
             onSortStart={(_, event) => (event.preventDefault())} // it does the trick
             onSortEnd={this.onSortEnd}
@@ -146,7 +142,9 @@ class ListItemComponent extends Component {
     };
 
     handleSetAction = (action) => () => {
-        this.setState({action: action});
+        if (this.state.action !== action) {
+            this.setState({action: action});
+        }
     };
 
     handleEditItem = item => () => {
@@ -243,7 +241,6 @@ class ListItems extends React.Component {
                     items={items}
                     list_key={list_key}
                     classes={classes}
-                    t={t}
                     table='items'
                 />
                 {done_items.length ?
@@ -266,7 +263,6 @@ class ListItems extends React.Component {
                         items={done_items}
                         list_key={list_key}
                         classes={classes}
-                        t={t}
                         table='done_items'
                         />
                         </Slide>
@@ -291,4 +287,4 @@ const mapStateToProps = store => {
 };
 
 
-export default connect(mapStateToProps)(withStyles(styles)(withTranslation()(ListItems)));
+export default connect(mapStateToProps)(withStyles(styles)((ListItems)));
