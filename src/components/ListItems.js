@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from "react-redux";
+import {withTranslation} from "react-i18next";
 
 import {withStyles} from "@material-ui/core/styles/index";
 import List from '@material-ui/core/List';
@@ -287,4 +288,4 @@ const mapStateToProps = store => {
 };
 
 
-export default connect(mapStateToProps)(withStyles(styles)((ListItems)));
+export default connect(mapStateToProps)(withStyles(styles)(withTranslation()(ListItems)));
