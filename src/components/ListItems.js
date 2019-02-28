@@ -259,7 +259,7 @@ class ListItems extends React.Component {
                                 classes={{label: classes.toggleLabel, root: classes.toggleRoot}}
                             />
                         </div>
-                        < Slide direction = "up" mountOnEnter unmountOnExit in={fade_checked}>
+                        <Slide direction = "up" mountOnEnter unmountOnExit in={fade_checked}>
                         <SortableComponent
                         items={done_items}
                         list_key={list_key}
